@@ -2,13 +2,35 @@
 import tkinter
 import os
 from PIL import ImageTk, Image
+import socket
+import struct
+
 
 class UDP():
+    """Velo control message class"""
     def __init__(self):
-        pass
+        self.sock = socket.socket(socket.AF_INET,  # Internet
+                                  socket.SOCK_DGRAM)  # UDP
+        self.UDP_IP = '127.0.0.1'
+        self.UDP_PORT = 5500
+        self.F_set = 500
+        self.kShaker = 0.006
+        self.shaker_freq = 10
+        self.m_inner = 20
+        self.kPedal = 5
+        self.shaker_limit = 1
+        self.friction = 5
+        self.p_set = 60
 
     def send_message(self):
-        pass
+        
+        pack = struct.pack(">3c8f", b"C", b"2", b"H", self.F_set, self.kShaker,
+                self.shaker_freq, self.m_inner,self.kPedal, self.shaker_limit,
+                self.friction, self.p_set)
+    
+        #pack = struct.pack(">3c8f", b"C", b"2", b"H", 500, 0.006, 20, 5, 1.1, 1, 5, 200000)
+        err = self.sock.sendto(pack, (self.UDP_IP, self.UDP_PORT))
+        print(err)
 
 class App():
     def __init__(self,window, window_title):
@@ -36,18 +58,20 @@ class App():
         #self.label_2.place(x = base_label_x + x_delta, y = base_label_y - y_delta)
         
         #F-set label
-        self.label_mass = tkinter.Label(window,text = 'F-set')
-        self.label_mass.config(font = (FONT, F_size))
-        self.label_mass.place(x = base_label_x, y = base_label_y + y_delta)
+        self.label_F_set = tkinter.Label(window,text = 'F-set')
+        self.label_F_set.config(font = (FONT, F_size))
+        self.label_F_set.place(x = base_label_x, y = base_label_y + y_delta)
         #F-set entry
-        self.entry_mass = tkinter.Entry(window)
-        self.entry_mass.insert(0,'400')
-        self.entry_mass.config(font = (FONT, F_size))
-        self.entry_mass.place(x = base_entry_x, y = base_entry_y + y_delta, width = ent_w)        
+        self.entry_F_set = tkinter.Entry(window)
+        self.entry_F_set.insert(0,'400')
+        self.entry_F_set.config(font = (FONT, F_size))
+        self.entry_F_set.place(x = base_entry_x, y = base_entry_y + y_delta, width = ent_w)        
 
         self.window.mainloop()
 
 
 
 if __name__ == "__main__":
-    App(tkinter.Tk(),"Velo test")
+    #App(tkinter.Tk(),"Velo test")
+    c = UDP()
+    c.send_message()
