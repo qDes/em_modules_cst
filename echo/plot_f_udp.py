@@ -2,10 +2,14 @@ from PyQt5 import QtCore, QtWidgets
 import pyqtgraph as pg
 import numpy as np
 import socket
+import struct
 
 x = []
 y = []
 c = 0
+pack = struct.pack(">3c8f",b"C",b"2",b"H", 500, 0.006, 10,
+        20,5,1,5,60)
+
 
 class MyWidget(pg.GraphicsWindow):
     
@@ -41,14 +45,16 @@ class MyWidget(pg.GraphicsWindow):
         global x
         global y
         global c
-        message = str(c+1)
-        message = message.encode()
-        self.sock.sendto(message,('0.0.0.0',31337))
-        data, ip = self.sock.recvfrom(1024)
-        print(data.decode())
+        global pack
 
-        x.append(data.decode()) 
-        y.append(data.decode())
+        #message = str(c+1)
+        #message = message.encode()
+        self.sock.sendto(pack,('127.0.0.1',5500))
+        data, ip = self.sock.recvfrom(1024)
+        data = struct.unpack(">3c2f",data)
+        F = data[3]
+        x.append(c) 
+        y.append(F)
         c += 1
         self.setData(x, y)
 
