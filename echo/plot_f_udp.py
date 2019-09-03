@@ -8,7 +8,7 @@ x = []
 y = []
 c = 0
 pack = struct.pack(">3c8f",b"C",b"2",b"H", 500, 0.006, 10,
-        20,5,1,5,60)
+        1,5,1,5,60)
 x1 = []
 y1 = []
 
@@ -17,7 +17,10 @@ class MyWidget(pg.GraphicsWindow):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock_recv.bind(('127.0.0.1',5550))
+
 
         self.mainLayout = QtWidgets.QVBoxLayout()
         self.setLayout(self.mainLayout)
@@ -61,8 +64,8 @@ class MyWidget(pg.GraphicsWindow):
         global y1
         #message = str(c+1)
         #message = message.encode()
-        self.sock.sendto(pack,('127.0.0.1',5500))
-        data, ip = self.sock.recvfrom(1024)
+        self.sock_send.sendto(pack,('127.0.0.1',5500))
+        data, ip = self.sock_recv.recvfrom(1024)
         data = struct.unpack(">3c2f",data)
         F = data[3]
         Pos = data[4]
