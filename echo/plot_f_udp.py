@@ -4,19 +4,19 @@ import numpy as np
 import socket
 import struct
 
-x = []
-y = []
-c = 0
-pack = struct.pack(">3c8f",b"C",b"2",b"H", 500, 0.006, 10,
-        1,5,1,5,60)
-x1 = []
-y1 = []
-
 class MyWidget(pg.GraphicsWindow):
-    
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         
+        self.c = 0
+        self.x = []
+        self.y = []
+        self.x1 = []
+        self.y1 = []
+        self.pack = struct.pack(">3c8f",b"C",b"2",b"H", 500, 0.006, 10,
+        1,5,1,5,60)
+
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_recv.bind(('127.0.0.1',5550))
@@ -51,31 +51,19 @@ class MyWidget(pg.GraphicsWindow):
 
 
     def onNewData(self):
-        '''
-        numPoints = 1000  
-        x = np.random.normal(size=numPoints)
-        y = np.random.normal(size=numPoints)
-        '''
-        global x
-        global y
-        global c
-        global pack
-        global x1
-        global y1
-        #message = str(c+1)
-        #message = message.encode()
-        self.sock_send.sendto(pack,('127.0.0.1',5500))
+        self.sock_send.sendto(self.pack,('127.0.0.1',5500))
         data, ip = self.sock_recv.recvfrom(1024)
         data = struct.unpack(">3c2f",data)
         F = data[3]
         Pos = data[4]
-        x.append(c) 
-        y.append(F)
-        c += 1
-        x1.append(c)
-        y1.append(Pos)
-        self.setData(x, y)
-        self.setData1(x1,y1)
+        self.x.append(self.c) 
+        self.y.append(F)
+        #c += 1
+        self.c += 1
+        self.x1.append(self.c)
+        self.y1.append(Pos)
+        self.setData(self.x, self.y)
+        self.setData1(self.x1,self.y1)
 
 def main():
     app = QtWidgets.QApplication([])

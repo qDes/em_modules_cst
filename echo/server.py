@@ -2,14 +2,18 @@ import socket
 import random
 import struct
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 server_address = '127.0.0.1'
-server_port = 5500
+port_recv = 5500
+port_send = 5550
+server = (server_address, port_recv)
+sock_recv.bind(server)
 
-server = (server_address, server_port)
-sock.bind(server)
-print("Listening on " + server_address + ":" + str(server_port))
+
+
+print("Listening on " )
 
 
 def get_pseudo_packet():
@@ -19,7 +23,7 @@ def get_pseudo_packet():
     return pack
 
 while True:
-    payload, client_address = sock.recvfrom(1024)
+    payload, client_address = sock_recv.recvfrom(1024)
     print("Echoing data back to " + str(client_address))
     data = get_pseudo_packet()
-    sent = sock.sendto(data, client_address)
+    sent = sock_send.sendto(data, (server_address,port_send))
