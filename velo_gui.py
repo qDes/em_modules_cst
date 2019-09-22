@@ -1,7 +1,7 @@
     
 import tkinter
 import os
-from PIL import ImageTk, Image
+#from PIL import ImageTk, Image
 import socket
 import struct
 

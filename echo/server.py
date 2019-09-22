@@ -24,6 +24,7 @@ def get_pseudo_packet():
 
 while True:
     payload, client_address = sock_recv.recvfrom(1024)
-    print("Echoing data back to " + str(client_address))
+    #print("Echoing data back to " + str(client_address))
+    print(payload)
     data = get_pseudo_packet()
     sent = sock_send.sendto(data, (server_address,port_send))
