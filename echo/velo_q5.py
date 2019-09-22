@@ -6,6 +6,8 @@ import time
 import socket
 import struct
 
+from plotting_udp import MyWidget
+
 class MainWindow(QMainWindow):
 
 
@@ -60,6 +62,9 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.friction_box)
         layout.addWidget(self.p_set_label)
         layout.addWidget(self.p_set_box)
+        
+        #layout.addWidget(MyWidget())
+        #self.sock_send.sendto(self.pack,('127.0.0.1',5500))
 
         w = QWidget()
         w.setLayout(layout)
@@ -72,7 +77,9 @@ class MainWindow(QMainWindow):
         self.timer.setInterval(50)
         self.timer.timeout.connect(self.recurring_timer)
         self.timer.start()
+        #self.sock_send.sendto(self.pack,('127.0.0.1',5500))
     
+
 
     def oh_no(self):
         #time.sleep(5)
