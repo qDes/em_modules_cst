@@ -4,11 +4,13 @@ import numpy as np
 import socket
 import struct
 
+from datetime import datetime
+
 class MyWidget(pg.GraphicsWindow):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.c = 0
+        self.c = datetime.now().timestamp()
         self.x = []
         self.y = []
         self.x1 = []
@@ -30,13 +32,13 @@ class MyWidget(pg.GraphicsWindow):
         self.timer.timeout.connect(self.onNewData)
 
         self.plotItem = self.addPlot(title="Points_Force")
-
+        self.plotItem.setYRange(0,500)
         self.plotDataItem = self.plotItem.plot([], pen=None, 
             symbolBrush=(255,0,0), symbolSize=5, symbolPen=None)
         
         ####
         self.plotItem1 = self.addPlot(title="Points_Pos")
-
+        
         self.plotDataItem1 = self.plotItem1.plot([], pen=None, 
             symbolBrush=(255,0,0), symbolSize=5, symbolPen=None)
  
@@ -57,10 +59,17 @@ class MyWidget(pg.GraphicsWindow):
         Pos = data[4]
         self.x.append(self.c) 
         self.y.append(F)
-        #c += 1
-        self.c += 1
+        #selfc += 1
+        self.c = datetime.now().timestamp()
         self.x1.append(self.c)
         self.y1.append(Pos)
+        
+        if len(self.x1) > 300:
+            del self.x1[0]
+            del self.y1[0]
+            del self.x[0]
+            del self.y[0]
+
         self.setData(self.x, self.y)
         self.setData1(self.x1,self.y1)
 

@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         self.timer = QTimer()
-        self.timer.setInterval(50)
+        self.timer.setInterval(200)
         self.timer.timeout.connect(self.recurring_timer)
         self.timer.start()
         #self.sock_send.sendto(self.pack,('127.0.0.1',5500))

@@ -1,6 +1,7 @@
 import socket
 import random
 import struct
+import math
 
 sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -15,16 +16,23 @@ sock_recv.bind(server)
 
 print("Listening on " )
 
-
-def get_pseudo_packet():
-    F = random.randint(1,200)
-    Pos = 10
-    pack = struct.pack(">3c2f",b"H",b"2",b"C",F,Pos)
+Pos = 0
+def get_pseudo_packet(pos, F):
+    
+    pos += 1
+    pack = struct.pack(">3c2f",b"H",b"2",b"C",F,pos)
     return pack
 
 while True:
-    payload, client_address = sock_recv.recvfrom(1024)
+    F = abs(math.sin(math.radians(Pos))*200)+random.randint(1,20)
+    Pos += 1
+    try:
+        payload, client_address = sock_recv.recvfrom(1024)
+    except KeyboardInterrupt:
+        sock_recv.close()
+        print("Stop server")
+        break
     #print("Echoing data back to " + str(client_address))
     print(payload)
-    data = get_pseudo_packet()
+    data = get_pseudo_packet(Pos, F)
     sent = sock_send.sendto(data, (server_address,port_send))
