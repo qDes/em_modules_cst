@@ -17,8 +17,9 @@ class MainWindow(QMainWindow):
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         #self.counter = 0
-        self.pack = struct.pack(">3c1i9f",b"C", b"2", b"H", 2, 10, 1,
-                1, 1.1, 1.1, 1.1 ,1.1,1.1,0)
+        #self.pack = struct.pack(">3c1i9f",b"C", b"2", b"H", 2, 10, 1,
+        #        1, 1.1, 1.1, 1.1 ,1.1,1.1,0)
+        self.pack = b'' 
         layout = QVBoxLayout()
         
         #self.l = QLabel("Start")
