@@ -6,7 +6,7 @@ import time
 import socket
 import struct
 
-from plotting_udp import MyWidget
+#from plotting_udp import MyWidget
 
 class MainWindow(QMainWindow):
 
@@ -17,9 +17,6 @@ class MainWindow(QMainWindow):
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         #self.counter = 0
-        #self.pack = struct.pack(">3c1i9f",b"C", b"2", b"H", 2, 10, 1,
-        #        1, 1.1, 1.1, 1.1 ,1.1,1.1,0)
-        self.pack = b'' 
         layout = QVBoxLayout()
         
         #self.l = QLabel("Start")
@@ -78,6 +75,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(w)
     
         self.show()
+        
+        self.get_params()
 
         self.timer = QTimer()
         self.timer.setInterval(200)
@@ -85,10 +84,7 @@ class MainWindow(QMainWindow):
         self.timer.start()
         #self.sock_send.sendto(self.pack,('127.0.0.1',5500))
     
-
-
-    def oh_no(self):
-        #time.sleep(5)
+    def get_params(self):
         f = int(self.f_box.text())
         m = float(self.m_box.text())
         k0 = float(self.k0_box.text())
@@ -101,7 +97,11 @@ class MainWindow(QMainWindow):
         mode = float(self.mode.currentText())
         self.pack = struct.pack(">3c1i9f",b"C", b"2", b"H", f, m, 
                 k0, k1, a, b, c, d, e, mode)
-            
+ 
+
+    def oh_no(self):
+        #time.sleep(5)
+        self.get_params()  
  
         #self.counter += textboxValue#20
 
