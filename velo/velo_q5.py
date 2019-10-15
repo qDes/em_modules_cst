@@ -16,9 +16,6 @@ class MainWindow(QMainWindow):
         
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        #self.counter = 0
-        self.pack = struct.pack(">3c8f",b"C", b"2", b"H", 20, 0.006, 10,
-                20, 1.1, 1, 5 ,60)
         layout = QVBoxLayout()
         
         #self.l = QLabel("Start")
@@ -72,17 +69,18 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(w)
     
         self.show()
+    
+
+        self.get_params()
 
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.recurring_timer)
         self.timer.start()
-        #self.sock_send.sendto(self.pack,('127.0.0.1',5500))
+        
     
 
-
-    def oh_no(self):
-        #time.sleep(5)
+    def get_params(self):
         f_set = float(self.f_set_box.text())
         kShaker = float(self.kShaker_box.text())
         shaker_freq = float(self.shaker_freq_box.text())
@@ -95,9 +93,10 @@ class MainWindow(QMainWindow):
                 shaker_freq, m, kPedal, shaker_limit, friction,
                 p_set)
  
+    def oh_no(self):
+        #time.sleep(5)
+        self.get_params()
         #self.counter += textboxValue#20
-
-    
 
 
     def recurring_timer(self):
