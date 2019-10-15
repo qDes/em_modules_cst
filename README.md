@@ -1,3 +1,11 @@
 # em_modules_cst
 
-some python scripts for CST EM modules control
+Скрипты для управления электромагнитными тренажёрами через UDP протокол.
+
+## Требования
+python 3.6+ (для асинхронных скриптов 3.7+)
+
+## Устанока
+```bash 
+pip install -r requirements.txt
+```
