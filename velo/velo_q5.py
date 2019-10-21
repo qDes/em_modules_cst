@@ -38,7 +38,8 @@ class MainWindow(QMainWindow):
         self.friction_box = QLineEdit('5')
         self.p_set_label = QLabel('p-set')
         self.p_set_box = QLineEdit('60')
-        
+        self.calib_label = QLabel('calib')
+        self.calib_box = QLineEdit('0')
 
         #layout.addWidget(self.l)
         layout.addWidget(b)
@@ -59,6 +60,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.friction_box)
         layout.addWidget(self.p_set_label)
         layout.addWidget(self.p_set_box)
+        layout.addWidget(self.calib_label)
+        layout.addWidget(self.calib_box)
         
         #layout.addWidget(MyWidget())
         #self.sock_send.sendto(self.pack,('127.0.0.1',5500))
@@ -89,9 +92,10 @@ class MainWindow(QMainWindow):
         shaker_limit = float(self.shaker_limit_box.text())
         friction = float(self.friction_box.text())
         p_set = float(self.p_set_box.text())
-        self.pack = struct.pack(">3c8f",b"C", b"2", b"H", f_set, kShaker, 
+        calib = float(self.calib_box.text())
+        self.pack = struct.pack(">3c9f",b"C", b"2", b"H", f_set, kShaker, 
                 shaker_freq, m, kPedal, shaker_limit, friction,
-                p_set)
+                p_set, calib)
  
     def oh_no(self):
         #time.sleep(5)
