@@ -19,7 +19,7 @@ def decode_wifi_data(data: list) -> tuple:
     return (header, ord(number), timer_long[0], encoder_int[0], f0, f1, sum1)
 
 if __name__ == '__main__':
-    with open('log/3.log', 'rb') as f:
+    with open('test1.log', 'rb') as f:
         '''
         b0 = f.read(1)
         b1 = f.read(1)

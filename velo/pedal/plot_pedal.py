@@ -29,7 +29,7 @@ class MyWidget(pg.GraphicsWindow):
         self.timer.timeout.connect(self.onNewData)
 
         self.plotItem = self.addPlot(title="f0")
-        self.plotItem.setYRange(0,2500)
+        #self.plotItem.setYRange(0,2500)
         self.plotDataItem = self.plotItem.plot([], pen=None, 
             symbolBrush=(255,0,0), symbolSize=5, symbolPen=None)
         
@@ -77,7 +77,7 @@ def run_pedal_plot(host, port):
     win = MyWidget(host, port)
     win.setBackground('w')
     win.show()
-    win.resize(800,600) 
+    win.resize(400,300) 
     win.raise_()
     app.exec_()
 
@@ -100,5 +100,5 @@ def decode_wifi(data: list) -> tuple:
 
 
 if __name__ == "__main__":
-    run_pedal_plot('192.168.0.103', 23)
+    run_pedal_plot('192.168.0.101', 23)
 
