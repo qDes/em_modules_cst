@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
 
     def recurring_timer(self):
         #self.counter +=1
-        self.sock_send.sendto(self.pack,('192.168.0.100',5500))
+        self.sock_send.sendto(self.pack,('192.168.0.102',5500))
         #self.l.setText("Counter: %d" % self.counter)
     
     

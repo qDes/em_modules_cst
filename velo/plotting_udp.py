@@ -20,7 +20,7 @@ class MyWidget(pg.GraphicsWindow):
         1,5,1,5,60)
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         #self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock_recv.bind(('192.168.0.100',5550))
+        self.sock_recv.bind(('192.168.0.102',5550))
 
 
         self.mainLayout = QtWidgets.QVBoxLayout()
