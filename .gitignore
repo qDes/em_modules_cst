@@ -1,4 +1,5 @@
 config.py
+.idea
 *.swp
 *.icloud
 # Byte-compiled / optimized / DLL files
