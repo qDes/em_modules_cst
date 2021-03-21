@@ -5,9 +5,33 @@ from math import cos, sin
 
 # callbacks
 
+class UDP:
+    enable = False
+    counter = 0
+
+    def __init__(self, i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6):
+        self.i0 = i0
+        self.jam_pos_in = jam_pos_in
+        self.F_set = F_set
+        self.kShaker = kShaker
+        self.shaker_freq = shaker_freq
+        self.m = m
+        self.f_mode2 = f_mode2
+        self.f_mode3 = f_mode3
+        self.a_mode5 = a_mode5
+        self.b_mode5 = b_mode5
+        self.c_mode5 = c_mode5
+        self.d_mode5 = d_mode5
+        self.g_mode5 = g_mode5
+        self.v_mode6 = v_mode6
+        self.kD_mode6 = kD_mode6
+        self.pow_mode6 = pow_mode6
+
+
 gl = 0
 
-#def plot_callback(sender, data):
+
+# def plot_callback(sender, data):
 def plot_callback():
     global gl
     clear_plot("Plot")
@@ -33,12 +57,17 @@ def plot_callback():
 def test():
     pass
 
+
 def connection(sender, data):
+    global a
+    a.enable = True
     address = get_value("address")
     port = get_value("port")
     print(address, port)
 
+
 def get_data(sender, data):
+    i0 = int(get_value("i0"))
     jam_pos_in = float(get_value("jam_pos_in"))
     F_set = float(get_value("F_set"))
     kShaker = float(get_value("kShaker"))
@@ -55,8 +84,7 @@ def get_data(sender, data):
     kD_mode6 = float(get_value("kD_mode6"))
     pow_mode6 = float(get_value("pow_mode6"))
 
-    print(jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5,
-          c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
+    return i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6
 
 
 with window("Main Window"):
@@ -68,14 +96,15 @@ with window("Main Window"):
         add_button("Connect", callback=connection)
         ## Params
         add_text("Model params")
-        add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1",  width=200)
+        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6"])
+        add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
         add_input_text("F_set", source="F_set", default_value="10.0", width=200)
         add_input_text("shaker_amp", source="shaker_freq", default_value="0.1", width=200)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
         add_input_text("m", source="m", default_value="20.0", width=200)
         add_input_text("f_mode2", source="f_mode2", default_value="0.0", width=200)
         add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200)
-        #add_input_text("F_set_", source="F_set_", width=200)
+        # add_input_text("F_set_", source="F_set_", width=200)
         add_input_text("a_mode5", source="a_mode5", default_value="0.0", width=200)
         add_input_text("b_mode5", source="b_mode5", default_value="0.0", width=200)
         add_input_text("c_mode5", source="c_mode5", default_value="0.0", width=200)
@@ -97,10 +126,17 @@ with window("Main Window"):
     add_same_line()
     add_plot("Plot", height=-1)
 
-def render_call():
-    global gl
-    gl += 0.1
+
+def render_call(sender, data):
+    global a
+    # print(a.counter)
+    # print(sender, data)
     plot_callback()
 
-set_render_callback(render_call)
-start_dearpygui(primary_window="Main Window")
+
+if __name__ == "__main__":
+    i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data("", "")
+    a = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
+    print(a)
+    set_render_callback(render_call)
+    start_dearpygui(primary_window="Main Window")
