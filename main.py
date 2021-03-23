@@ -1,69 +1,33 @@
 from dearpygui.core import *
 from dearpygui.simple import *
 from math import cos, sin
-
-
-# callbacks
-
-class UDP:
-    enable = False
-    counter = 0
-
-    def __init__(self, i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6):
-        self.i0 = i0
-        self.jam_pos_in = jam_pos_in
-        self.F_set = F_set
-        self.kShaker = kShaker
-        self.shaker_freq = shaker_freq
-        self.m = m
-        self.f_mode2 = f_mode2
-        self.f_mode3 = f_mode3
-        self.a_mode5 = a_mode5
-        self.b_mode5 = b_mode5
-        self.c_mode5 = c_mode5
-        self.d_mode5 = d_mode5
-        self.g_mode5 = g_mode5
-        self.v_mode6 = v_mode6
-        self.kD_mode6 = kD_mode6
-        self.pow_mode6 = pow_mode6
-
-
-gl = 0
+from util import UDP, Plotter
 
 
 # def plot_callback(sender, data):
 def plot_callback():
-    global gl
+    global udp
+    x1, x2 = udp.send()
+    plot.update(x1, x2)
+    # print(plot.x1)
     clear_plot("Plot")
-
-    data1x = []
-    data1y = []
-    for i in range(0, 100):
-        data1x.append(3.14 * i / 180)
-        data1y.append(cos(3 * 3.14 * i / 180 + gl))
-
-    data2x = []
-    data2y = []
-    for i in range(0, 100):
-        data2x.append(3.14 * i / 180)
-        data2y.append(sin(2 * 3.14 * i / 180 + gl))
-
-    add_line_series("Plot", "Cos", data1x, data1y, weight=2)
-    add_line_series("Plot", "Sin", data2x, data2y, weight=2)
-    # add_shade_series("Plot", "Cos Area", data1x, data1y, y2=[0.0]*100, weight=2, fill=[255, 0, 0, 100])
-    # add_scatter_series("Plot", "Sin", data2x, data2y)
-
-
-def test():
-    pass
+    add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
+    add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
 
 
 def connection(sender, data):
-    global a
-    a.enable = True
+    global udp
+    udp.enable = True
     address = get_value("address")
     port = get_value("port")
     print(address, port)
+
+
+def setup_params(sender, data):
+    i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
+        "", "")
+    udp.update_params(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
+                      d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
 
 
 def get_data(sender, data):
@@ -86,6 +50,9 @@ def get_data(sender, data):
 
     return i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6
 
+
+def test():
+    pass
 
 with window("Main Window"):
     with group("Left Panel", width=250):
@@ -114,29 +81,25 @@ with window("Main Window"):
         add_input_text("kD_mode6", source="kD_mode6", default_value="0.0", width=200)
         add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
 
-        add_button("Set params", callback=get_data)
+        add_button("Set params", callback=setup_params)
         add_button("Save params", callback=test)
 
     add_same_line()
-    '''
-    with group("Right Panel", width=250):
-        add_button("Z", callback=plot_callback)
-        add_input_text("New Tdfgdfg", source="new-tdfgdfg", width=200)
-    '''
+
     add_same_line()
     add_plot("Plot", height=-1)
 
 
 def render_call(sender, data):
-    global a
-    # print(a.counter)
-    # print(sender, data)
+
     plot_callback()
 
 
 if __name__ == "__main__":
+
     i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data("", "")
-    a = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
-    print(a)
+    udp = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
+    plot = Plotter()
+
     set_render_callback(render_call)
     start_dearpygui(primary_window="Main Window")
