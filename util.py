@@ -27,7 +27,7 @@ class UDP:
                                 f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6, 0,
                                 0, 0, 0, 0, 0)
 
-        # self.
+        self.ip = '0.0.0.0'
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -64,12 +64,18 @@ class UDP:
                                 0, 0, 0, 0, 0)
 
     def send(self):
-        self.sock_send.sendto(self.pack, ('0.0.0.0', 5500))
+        self.sock_send.sendto(self.pack, (self.ip, 5500))
         data, ip = self.sock_recv.recvfrom(1024)
         data = struct.unpack(">3c10f", data)
         self.F = data[3]
         self.pos = data[4]
         return self.F, self.pos
+
+    def connect(self, ip):
+        self.ip = ip
+        self.sock_recv.bind((ip, 5550))
+        self.sock_recv.settimeout(1)
+        self.enable = True
 
 
 class Plotter:

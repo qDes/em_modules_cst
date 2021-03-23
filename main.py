@@ -7,20 +7,25 @@ from util import UDP, Plotter
 # def plot_callback(sender, data):
 def plot_callback():
     global udp
-    x1, x2 = udp.send()
-    plot.update(x1, x2)
-    # print(plot.x1)
-    clear_plot("Plot")
-    add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
-    add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
+    if udp.enable:
+        x1, x2 = udp.send()
+        plot.update(x1, x2)
+        clear_plot("Plot")
+        add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
+        add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
 
 
-def connection(sender, data):
+def connect(sender, data):
     global udp
     udp.enable = True
     address = get_value("address")
     port = get_value("port")
+    udp.connect(address)
     print(address, port)
+
+def disconnect(sender, data):
+    global udp
+    udp.enable = False
 
 
 def setup_params(sender, data):
@@ -60,7 +65,8 @@ with window("Main Window"):
         add_text("Connection params")
         add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
         add_input_text("Port", source="port", default_value="1234", width=200)
-        add_button("Connect", callback=connection)
+        add_button("Connect", callback=connect)
+        add_button("Disconnect", callback=disconnect)
         ## Params
         add_text("Model params")
         add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6"])
@@ -87,7 +93,7 @@ with window("Main Window"):
     add_same_line()
 
     add_same_line()
-    add_plot("Plot", height=-1)
+    add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F, pos")
 
 
 def render_call(sender, data):
