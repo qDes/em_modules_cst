@@ -19,9 +19,9 @@ def connect(sender, data):
     global udp
     udp.enable = True
     address = get_value("address")
-    port = get_value("port")
+    #port = get_value("port")
     udp.connect(address)
-    print(address, port)
+    print(address)
 
 def disconnect(sender, data):
     global udp
@@ -64,7 +64,7 @@ with window("Main Window"):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
         add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
-        add_input_text("Port", source="port", default_value="1234", width=200)
+        #add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
