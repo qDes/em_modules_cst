@@ -72,8 +72,8 @@ with window("Main Window"):
         add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6"])
         add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
         add_input_text("F_set", source="F_set", default_value="10.0", width=200)
-        add_input_text("shaker_amp", source="shaker_freq", default_value="0.1", width=200)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
+        add_input_text("shaker_freq", source="shaker_freq", default_value="0.1", width=200)
         add_input_text("m", source="m", default_value="20.0", width=200)
         add_input_text("f_mode2", source="f_mode2", default_value="0.0", width=200)
         add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200)
@@ -88,7 +88,7 @@ with window("Main Window"):
         add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
 
         add_button("Set params", callback=setup_params)
-        add_button("Save params", callback=test)
+        #add_button("Save params", callback=test)
 
     add_same_line()
 

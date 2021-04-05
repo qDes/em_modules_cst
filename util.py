@@ -3,7 +3,6 @@ import struct
 
 
 class UDP:
-
     def __init__(self, i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
                  d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6):
         self.i0 = i0
@@ -22,22 +21,17 @@ class UDP:
         self.v_mode6 = v_mode6
         self.kD_mode6 = kD_mode6
         self.pow_mode6 = pow_mode6
-
         self.pack = struct.pack(">3ci21f", b"C", b"2", b"H", i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2,
                                 f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6, 0,
                                 0, 0, 0, 0, 0)
-
-        self.ip = '0.0.0.0'
+        self.ip = '192.168.0.193'
         self.sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
         self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        self.sock_recv.bind(('0.0.0.0', 5550))
-        self.sock_recv.settimeout(1)
-
+        self.sock_send.bind(('0.0.0.0', 5550))
+        self.sock_recv.settimeout(2)
+        self.sock_send.settimeout(2)
         self.F = 0
         self.pos = 0
-
         self.enable = False
         self.counter = 0
 
@@ -64,8 +58,9 @@ class UDP:
                                 0, 0, 0, 0, 0)
 
     def send(self):
-        self.sock_send.sendto(self.pack, (self.ip, 5500))
-        data, ip = self.sock_recv.recvfrom(1024)
+        addr = ("192.168.0.193", 5500)
+        self.sock_send.sendto(self.pack, addr)
+        data, ip = self.sock_send.recvfrom(2048)
         data = struct.unpack(">3c10f", data)
         self.F = data[3]
         self.pos = data[4]
@@ -73,13 +68,12 @@ class UDP:
 
     def connect(self, ip):
         self.ip = ip
-        self.sock_recv.bind((ip, 5550))
-        self.sock_recv.settimeout(1)
+        # self.sock_recv.bind((ip, 5550))
+        # self.sock_recv.settimeout(20)
         self.enable = True
 
 
 class Plotter:
-
     def __init__(self):
         self.x1 = []
         self.x2 = []
@@ -98,3 +92,4 @@ class Plotter:
             self.x2 = self.x2[1:]
             self.y1 = self.y1[1:]
             self.y2 = self.y2[1:]
+
