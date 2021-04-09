@@ -69,7 +69,7 @@ with window("Main Window"):
         add_button("Disconnect", callback=disconnect)
         ## Params
         add_text("Model params")
-        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6"])
+        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6", "7", "8"])
         add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
         add_input_text("F_set", source="F_set", default_value="10.0", width=200)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
