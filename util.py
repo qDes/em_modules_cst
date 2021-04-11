@@ -79,22 +79,39 @@ class Plotter:
     def __init__(self):
         self.x1 = []
         self.x2 = []
+        self.x3 = []
+        self.x4 = []
+
         self.y1 = []
         self.y2 = []
+        self.y3 = []
+        self.y4 = []
+
         self.counter = 0
 
-    def update(self, y1, y2):
+    def update(self, y1=0, y2=0, y3=0, y4=0):
         self.counter += 1
+
         self.y1.append(y1)
         self.y2.append(y2)
+        self.y3.append(y3)
+        self.y4.append(y4)
+
         self.x1.append(self.counter)
         self.x2.append(self.counter)
+        self.x3.append(self.counter)
+        self.x4.append(self.counter)
+
         if len(self.x1) > 100:
             self.x1 = self.x1[1:]
             self.x2 = self.x2[1:]
+            self.x3 = self.x3[1:]
+            self.x4 = self.x4[1:]
+
             self.y1 = self.y1[1:]
             self.y2 = self.y2[1:]
-
+            self.y3 = self.y3[1:]
+            self.y4 = self.y4[1:]
 
 
 
