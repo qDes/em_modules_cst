@@ -56,7 +56,7 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -83,6 +83,6 @@ if __name__ == "__main__":
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
     udp = UDP(i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib)
     plot = Plotter()
-
+    set_main_window_title("Velo")
     set_render_callback(render_call)
     start_dearpygui(primary_window="Main Window")

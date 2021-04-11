@@ -17,7 +17,7 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)

@@ -59,7 +59,7 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
@@ -102,6 +102,6 @@ if __name__ == "__main__":
     udp = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5,
               g_mode5, v_mode6, kD_mode6, pow_mode6)
     plot = Plotter()
-
+    set_main_window_title("Universal/Inclided")
     set_render_callback(render_call)
     start_dearpygui(primary_window="Main Window")
