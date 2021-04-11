@@ -1,27 +1,16 @@
 from dearpygui.core import *
 from dearpygui.simple import *
-from math import cos, sin
 from util import UDP, Plotter
-
-
-# def plot_callback(sender, data):
-def plot_callback():
-    global udp
-    if udp.enable:
-        x1, x2 = udp.send()
-        plot.update(x1, x2)
-        clear_plot("Plot")
-        add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
-        add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
 
 
 def connect(sender, data):
     global udp
     udp.enable = True
     address = get_value("address")
-    #port = get_value("port")
+    # port = get_value("port")
     udp.connect(address)
     print(address)
+
 
 def disconnect(sender, data):
     global udp
@@ -56,15 +45,22 @@ def get_data(sender, data):
     return i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6
 
 
-def test():
-    pass
+def plot_callback():
+    global udp, plot
+    if udp.enable:
+        x1, x2 = udp.send()
+        plot.update(x1, x2)
+        clear_plot("Plot")
+        add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
+        add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
+
 
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
         add_input_text("Address", source="address", default_value="0.0.0.0", width=200)
-        #add_input_text("Port", source="port", default_value="1234", width=200)
+        # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -88,7 +84,7 @@ with window("Main Window"):
         add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
 
         add_button("Set params", callback=setup_params)
-        #add_button("Save params", callback=test)
+        # add_button("Save params", callback=test)
 
     add_same_line()
 
@@ -97,14 +93,14 @@ with window("Main Window"):
 
 
 def render_call(sender, data):
-
     plot_callback()
 
 
 if __name__ == "__main__":
-
-    i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data("", "")
-    udp = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
+    i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
+        "", "")
+    udp = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5,
+              g_mode5, v_mode6, kD_mode6, pow_mode6)
     plot = Plotter()
 
     set_render_callback(render_call)

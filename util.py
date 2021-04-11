@@ -1,6 +1,8 @@
 import socket
 import struct
 
+from dearpygui.core import get_value, clear_plot
+
 
 class UDP:
     def __init__(self, i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
@@ -92,4 +94,7 @@ class Plotter:
             self.x2 = self.x2[1:]
             self.y1 = self.y1[1:]
             self.y2 = self.y2[1:]
+
+
+
 
