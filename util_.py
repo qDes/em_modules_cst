@@ -73,26 +73,31 @@ class UDP:
         self.f18 = f18
         self.f19 = f19
         self.f20 = f20
-        self.pack = struct.pack(">3ci21f", b"C", b"2", b"H", i0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13,
+        self.pack = struct.pack(">3ci20f", b"C", b"2", b"H", i0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13,
                                 f14, f15, f16, f17, f18, f19, f20)
 
     def send(self):
         # addr = ("192.168.0.193", 5500)
         addr = (self.ip, 5500)
-        self.sock_send.sendto(self.pack, addr)
-        data, ip = self.sock_send.recvfrom(2048)
-        data = struct.unpack(">3c10f", data)
-        self.F0 = data[0]
-        self.F1 = data[1]
-        self.F2 = data[2]
-        self.F3 = data[3]
-        self.F4 = data[4]
-        self.F5 = data[5]
-        self.F6 = data[6]
-        self.F7 = data[7]
-        self.F8 = data[8]
-        self.F9 = data[9]
-        return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9, self.F10
+        try:
+            self.sock_send.sendto(self.pack, addr)
+            data, ip = self.sock_send.recvfrom(2048)
+            data = struct.unpack(">3c10f", data)
+            self.F0 = data[0]
+            self.F1 = data[1]
+            self.F2 = data[2]
+            self.F3 = data[3]
+            self.F4 = data[4]
+            self.F5 = data[5]
+            self.F6 = data[6]
+            self.F7 = data[7]
+            self.F8 = data[8]
+            self.F9 = data[9]
+            return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9, self.F10
+        except socket.timeout:
+            print("timeout")
+            self.enable = False
+            return None
 
     def connect(self, ip):
         self.ip = ip
