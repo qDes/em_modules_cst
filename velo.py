@@ -31,7 +31,10 @@ def render_call(sender, data):
 def plot_callback():
     global udp, plot
     if udp.enable:
-        x1, x2 = udp.send()
+        x = udp.send()
+        if not x:
+            return
+        x1, x2 = x[3], x[4]
         plot.update(x1, x2)
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
@@ -49,6 +52,7 @@ def get_data(sender, data):
     m_inner = float(get_value("m_inner"))
     kPedal = float(get_value("kPedal"))
     calib = float(get_value("calib"))
+    print(i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib)
     return i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib
 
 
