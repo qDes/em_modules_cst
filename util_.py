@@ -93,7 +93,7 @@ class UDP:
             self.F7 = data[7]
             self.F8 = data[8]
             self.F9 = data[9]
-            return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9, self.F10
+            return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9
         except socket.timeout:
             print("timeout")
             self.enable = False

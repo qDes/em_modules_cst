@@ -84,7 +84,7 @@ with window("Main Window"):
         # add_button("Save params", callback=test)
 
     add_same_line()
-    add_plot("Force/position on rowing", height=-1, x_axis_name="Counter", y_axis_name="F0, pos0, F1, pos1")
+    add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F0, pos0, F1, pos1")
 
 if __name__ == "__main__":
     i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")
