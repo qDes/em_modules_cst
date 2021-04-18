@@ -48,7 +48,10 @@ def get_data(sender, data):
 def plot_callback():
     global udp, plot
     if udp.enable:
-        x1, x2 = udp.send()
+        x = udp.send()
+        if not x:
+            return
+        x1, x2 = x[0], x[1]
         plot.update(x1, x2)
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)

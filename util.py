@@ -60,18 +60,21 @@ class UDP:
                                 0, 0, 0, 0, 0)
 
     def send(self):
-        addr = ("192.168.0.193", 5500)
-        self.sock_send.sendto(self.pack, addr)
-        data, ip = self.sock_send.recvfrom(2048)
-        data = struct.unpack(">3c10f", data)
-        self.F = data[3]
-        self.pos = data[4]
-        return self.F, self.pos
+        addr = (self.ip, 5500)
+        try:
+            self.sock_send.sendto(self.pack, addr)
+            data, ip = self.sock_send.recvfrom(2048)
+            data = struct.unpack(">3c10f", data)
+            self.F = data[3]
+            self.pos = data[4]
+            return (self.F, self.pos)
+        except socket.timeout:
+            print("timeout")
+            self.enable = False
+            return None
 
     def connect(self, ip):
         self.ip = ip
-        # self.sock_recv.bind((ip, 5550))
-        # self.sock_recv.settimeout(20)
         self.enable = True
 
 
@@ -112,6 +115,3 @@ class Plotter:
             self.y2 = self.y2[1:]
             self.y3 = self.y3[1:]
             self.y4 = self.y4[1:]
-
-
-
