@@ -1,6 +1,6 @@
 from dearpygui.core import *
 from dearpygui.simple import *
-from util import UDP, Plotter
+from util_ import UDP, Plotter
 
 
 def connect(sender, data):
@@ -20,6 +20,7 @@ def disconnect(sender, data):
 def setup_params(sender, data):
     i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
         "", "")
+
     udp.update_params(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
                       d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
 
@@ -51,7 +52,7 @@ def plot_callback():
         x = udp.send()
         if not x:
             return
-        x1, x2 = x[0], x[1]
+        x1, x2 = x[3], x[4]
         plot.update(x1, x2)
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)

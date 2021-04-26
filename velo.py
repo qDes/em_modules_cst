@@ -1,8 +1,7 @@
 from dearpygui.core import *
 from dearpygui.simple import *
 
-from util_ import UDP
-from util import Plotter
+from util_ import Plotter, UDP
 
 
 def connect(sender, data):
