@@ -1,8 +1,13 @@
+import json
+
 from dearpygui.core import *
 from dearpygui.simple import *
 
 from util_ import UDP
 from util import Plotter
+
+PARAMS = "/Users/a18351639/projects/em_modules_cst/params/rowing.json"
+HELP = "/Users/a18351639/projects/em_modules_cst/params/rowing.help"
 
 
 def connect(sender, data):
@@ -59,6 +64,32 @@ def plot_callback():
         add_line_series("Plot", "pos1", plot.x2, plot.y2, weight=2)
 
 
+def save_params(sender, data):
+    i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")
+    params = dict(i0=i0, a=a, b=b, c=c, d=d, e=e, f=f, m_inner=m_inner, kOut_mode0=kOut_mode0, kOut_mode1=kOut_mode1)
+    with open(PARAMS, "w") as my_file:
+        my_file.write(json.dumps(params))
+
+
+def load_params(sender, data):
+    with open(PARAMS, "r") as my_file:
+        data = json.loads(my_file.read())
+    set_value("i0", data['i0'])
+    set_value("a", data['a'])
+    set_value("b", data['b'])
+    set_value("c", data['c'])
+    set_value("d", data['d'])
+    set_value("e", data['f'])
+    set_value("f", data['f'])
+    set_value("m_inner", data['m_inner'])
+    set_value("kOut_mode0", data['kOut_mode0'])
+    set_value("kOut_mode1", data['kOut_mode1'])
+
+
+def close_help():
+    close_popup("Help Popup")
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
@@ -81,7 +112,15 @@ with window("Main Window"):
         add_input_text("kOut_mode1", source="kOut_mode1", default_value="0.0", width=200)
 
         add_button("Set params", callback=setup_params)
+        add_button("Save params", callback=save_params)
+        add_button("Load params", callback=load_params)
         # add_button("Save params", callback=test)
+        add_button("Help")
+        with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
+            with open(HELP, 'r') as my_file:
+                help_data = my_file.read()
+            add_text(help_data)
+            add_button("Close", callback=close_help)
 
     add_same_line()
     add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F0, pos0, F1, pos1")
