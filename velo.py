@@ -1,7 +1,12 @@
+import json
+
 from dearpygui.core import *
 from dearpygui.simple import *
 
 from util_ import Plotter, UDP
+
+PARAMS = "/Users/a18351639/projects/em_modules_cst/params/velo.json"
+HELP = "/Users/a18351639/projects/em_modules_cst/params/velo.help"
 
 
 def connect(sender, data):
@@ -55,6 +60,33 @@ def get_data(sender, data):
     return i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib
 
 
+def save_params(sender, data):
+    i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
+    params = dict(i0=i0, p_set=p_set, friction=friction, kShaker=kShaker, shaker_limit=shaker_limit, F_set=F_set,
+                  shaker_freqp=shaker_freqp, m_inner=m_inner, kPedal=kPedal, calib=calib)
+    with open(PARAMS, "w") as my_file:
+        my_file.write(json.dumps(params))
+
+
+def load_params(sender, data):
+    with open(PARAMS, "r") as my_file:
+        data = json.loads(my_file.read())
+    set_value("i0", data['i0'])
+    set_value("p_set", data['p_set'])
+    set_value("friction", data['friction'])
+    set_value("kShaker", data['kShaker'])
+    set_value("shaker_limit", data['shaker_limit'])
+    set_value("F_set", data['F_set'])
+    set_value("shaker_freqp", data['shaker_freqp'])
+    set_value("m_inner", data['m_inner'])
+    set_value("kPedal", data['kPedal'])
+    set_value("calib", data['calib'])
+
+
+def close_help():
+    close_popup("Help Popup")
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
@@ -76,7 +108,15 @@ with window("Main Window"):
         add_input_text("calib", source="calib", default_value="0.0", width=200)
 
         add_button("Set params", callback=setup_params)
+        add_button("Save params", callback=save_params)
+        add_button("Load params", callback=load_params)
         # add_button("Save params", callback=test)
+        add_button("Help")
+        with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
+            with open(HELP, 'r') as my_file:
+                help_data = my_file.read()
+            add_text(help_data)
+            add_button("Close", callback=close_help)
 
     add_same_line()
 
