@@ -1,6 +1,11 @@
+import json
 from dearpygui.core import *
 from dearpygui.simple import *
+
 from util_ import UDP, Plotter
+
+PARAMS = "/Users/a18351639/projects/em_modules_cst/params/main.json"
+HELP = "/Users/a18351639/projects/em_modules_cst/params/main.help"
 
 
 def connect(sender, data):
@@ -59,6 +64,41 @@ def plot_callback():
         add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
 
 
+def save_params(sender, data):
+    i0, jam_pos_in, F_set, kShaker, shaker_freq, m, \
+    f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data("", "")
+    params = dict(i0=i0, jam_pos_in=jam_pos_in, F_set=F_set, kShaker=kShaker, shaker_freq=shaker_freq, m=m,
+                  f_mode2=f_mode2, f_mode3=f_mode3, a_mode5=a_mode5, b_mode5=b_mode5, c_mode5=c_mode5, d_mode5=d_mode5,
+                  g_mode5=g_mode5, v_mode6=v_mode6, kD_mode6=kD_mode6, pow_mode6=pow_mode6)
+    with open(PARAMS, "w") as my_file:
+        my_file.write(json.dumps(params))
+
+
+def close_help():
+    close_popup("Help Popup")
+
+
+def load_params(sender, data):
+    with open(PARAMS, "r") as my_file:
+        data = json.loads(my_file.read())
+    set_value("i0", data['i0'])
+    set_value("jam_pos_in", data["jam_pos_in"])
+    set_value("F_set", data["F_set"])
+    set_value("kShaker", data["kShaker"])
+    set_value("shaker_freq", data["shaker_freq"])
+    set_value("m", data["m"])
+    set_value("f_mode2", data["f_mode2"])
+    set_value("f_mode3", data["f_mode3"])
+    set_value("a_mode5", data["a_mode5"])
+    set_value("b_mode5", data["b_mode5"])
+    set_value("c_mode5", data["c_mode5"])
+    set_value("d_mode5", data["d_mode5"])
+    set_value("g_mode5", data["g_mode5"])
+    set_value("v_mode6", data["v_mode6"])
+    set_value("kD_mode6", data["kD_mode6"])
+    set_value("pow_mode6", data["pow_mode6"])
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
@@ -88,7 +128,14 @@ with window("Main Window"):
         add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
 
         add_button("Set params", callback=setup_params)
-        # add_button("Save params", callback=test)
+        add_button("Save params", callback=save_params)
+        add_button("Load params", callback=load_params)
+        add_button("Help")
+        with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
+            with open(HELP, 'r') as my_file:
+                help_data = my_file.read()
+            add_text(help_data)
+            add_button("Close", callback=close_help)
 
     add_same_line()
 
