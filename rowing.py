@@ -112,9 +112,9 @@ with window("Main Window"):
         add_input_text("kOut_mode1", source="kOut_mode1", default_value="0.0", width=200)
 
         add_button("Set params", callback=setup_params)
+        add_spacing(count=10)
         add_button("Save params", callback=save_params)
         add_button("Load params", callback=load_params)
-        # add_button("Save params", callback=test)
         add_button("Help")
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
