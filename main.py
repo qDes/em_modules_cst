@@ -1,11 +1,14 @@
+import datetime
 import json
+
 from dearpygui.core import *
 from dearpygui.simple import *
 
-from util_ import UDP, Plotter
+from util_ import UDP, Plotter, PlotSaver
 
 PARAMS = "/Users/a18351639/projects/em_modules_cst/params/main.json"
 HELP = "/Users/a18351639/projects/em_modules_cst/params/main.help"
+RECORD_DIR = "/Users/a18351639/projects/em_modules_cst/plots"
 
 
 def connect(sender, data):
@@ -62,6 +65,8 @@ def plot_callback():
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
         add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
+        if recorder.is_saving:
+            recorder.get_data(x1, x2)
 
 
 def save_params(sender, data):
@@ -99,11 +104,20 @@ def load_params(sender, data):
     set_value("pow_mode6", data["pow_mode6"])
 
 
+def start_record():
+    recorder.start()
+
+
+def stop_record():
+    recorder.stop()
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
@@ -131,6 +145,10 @@ with window("Main Window"):
         add_spacing(count=10)
         add_button("Save params", callback=save_params)
         add_button("Load params", callback=load_params)
+        add_spacing(count=10)
+        add_button("Start record", callback=start_record)
+        add_button("Stop record", callback=stop_record)
+        add_spacing(count=10)
         add_button("Help")
 
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
@@ -153,6 +171,7 @@ if __name__ == "__main__":
     udp = UDP(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5,
               g_mode5, v_mode6, kD_mode6, pow_mode6)
     plot = Plotter()
+    recorder = PlotSaver(RECORD_DIR, "main")
     set_main_window_title("Universal/Inclided")
     set_render_callback(render_call)
     start_dearpygui(primary_window="Main Window")
