@@ -1,3 +1,5 @@
+import csv
+import datetime
 import socket
 import struct
 
@@ -120,16 +122,23 @@ class Plotter:
 
     def update(self, y1=0, y2=0, y3=0, y4=0):
         self.counter += 1
+        ts = int(datetime.datetime.now().timestamp())
 
         self.y1.append(y1)
         self.y2.append(y2)
         self.y3.append(y3)
         self.y4.append(y4)
-
+        '''
+        self.x1.append(ts)
+        self.x2.append(ts)
+        self.x3.append(ts)
+        self.x4.append(ts)
+        '''
         self.x1.append(self.counter)
         self.x2.append(self.counter)
         self.x3.append(self.counter)
-        self.x4.append(self.counter)
+        self.x4.append(self.counter)   
+
 
         if len(self.x1) > 100:
             self.x1 = self.x1[1:]
@@ -141,3 +150,56 @@ class Plotter:
             self.y2 = self.y2[1:]
             self.y3 = self.y3[1:]
             self.y4 = self.y4[1:]
+
+
+class PlotSaver:
+    def __init__(self, directory, name):
+        self.is_saving = False
+        self.directory = directory
+        self.param1 = []
+        self.param2 = []
+        self.param3 = []
+        self.param4 = []
+        self.ts = []
+        self.my_file = ''
+        self.name = name
+
+    def start(self):
+        if self.is_saving:
+            return None
+
+        self.is_saving = True
+        self.my_file = self.directory+f'/{self.name}_{datetime.datetime.now().strftime("%y-%m-%d_%H-%M-%S")}.csv'
+        with open(self.my_file, 'w+') as my_file:
+            pass
+
+    def stop(self):
+        self.is_saving = False
+        self.__save()
+
+    def get_data(self, param1, param2, param3=None, param4=None):
+        self.ts.append(datetime.datetime.now().timestamp())
+        self.param1.append(param1)
+        self.param2.append(param2)
+        if param3:
+            self.param3.append(param3)
+        if param4:
+            self.param4.append(param4)
+
+        if len(self.ts) > 100:
+            self.__save()
+
+
+    def __save(self):
+        with open(self.my_file, 'a+') as my_file:
+            writer = csv.writer(my_file, delimiter=',')
+            for i, item in enumerate(self.ts):
+                if self.param3:
+                    writer.writerow([self.param1[i], self.param2[i], self.param3[i], self.param4[i], item])
+                else:
+                    writer.writerow([self.param1[i], self.param2[i], item])
+        self.param1 = []
+        self.param2 = []
+        self.param3 = []
+        self.param4 = []
+        self.ts = []
