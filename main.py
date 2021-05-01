@@ -1,4 +1,3 @@
-import datetime
 import json
 
 from dearpygui.core import *
@@ -60,7 +59,7 @@ def plot_callback():
         x = udp.send()
         if not x:
             return
-        x1, x2 = x[3], x[4]
+        x1, x2 = x[0], x[1]
         plot.update(x1, x2)
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
@@ -116,8 +115,8 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)

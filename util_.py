@@ -85,16 +85,16 @@ class UDP:
             self.sock_send.sendto(self.pack, addr)
             data, ip = self.sock_send.recvfrom(2048)
             data = struct.unpack(">3c10f", data)
-            self.F0 = data[0]
-            self.F1 = data[1]
-            self.F2 = data[2]
-            self.F3 = data[3]
-            self.F4 = data[4]
-            self.F5 = data[5]
-            self.F6 = data[6]
-            self.F7 = data[7]
-            self.F8 = data[8]
-            self.F9 = data[9]
+            self.F0 = data[3]
+            self.F1 = data[4]
+            self.F2 = data[5]
+            self.F3 = data[6]
+            self.F4 = data[7]
+            self.F5 = data[8]
+            self.F6 = data[9]
+            self.F7 = data[10]
+            self.F8 = data[11]
+            self.F9 = data[12]
             return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9
         except socket.timeout:
             print("timeout")
