@@ -9,6 +9,7 @@ PARAMS = "/Users/a18351639/projects/em_modules_cst/params/main.json"
 HELP = "/Users/a18351639/projects/em_modules_cst/params/main.help"
 RECORD_DIR = "/Users/a18351639/projects/em_modules_cst/plots"
 
+COUNTER = 0
 
 def connect(sender, data):
     global udp
@@ -54,7 +55,13 @@ def get_data(sender, data):
 
 
 def plot_callback():
-    global udp, plot
+    global udp, plot, COUNTER
+    COUNTER += 1
+
+    if COUNTER % 3 != 0:
+        print(COUNTER)
+        return
+
     if udp.enable:
         x = udp.send()
         if not x:
