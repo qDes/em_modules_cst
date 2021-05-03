@@ -27,7 +27,7 @@ def disconnect(sender, data):
 def setup_params(sender, data):
     i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
         "", "")
-
+    print(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
     udp.update_params(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
                       d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
 
@@ -60,10 +60,18 @@ def plot_callback():
         if not x:
             return
         x1, x2 = x[0], x[1]
+        x2 *= 10
         plot.update(x1, x2)
+
         clear_plot("Plot")
-        add_line_series("Plot", "F", plot.x1, plot.y1, weight=2)
-        add_line_series("Plot", "pos", plot.x2, plot.y2, weight=2)
+        add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
+
+        add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
+        add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+
         if recorder.is_saving:
             recorder.get_data(x1, x2)
 
@@ -115,8 +123,8 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
@@ -157,7 +165,7 @@ with window("Main Window"):
             add_button("Close", callback=close_help)
 
     add_same_line()
-    add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F, pos")
+    add_plot("Plot", height=-1, yaxis2=True, yaxis_lock_min=True, yaxis_lock_max=True, y2axis_lock_max=True, y2axis_lock_min=True)
 
 
 def render_call(sender, data):
@@ -172,5 +180,10 @@ if __name__ == "__main__":
     plot = Plotter()
     recorder = PlotSaver(RECORD_DIR, "main")
     set_main_window_title("Universal/Inclided")
+    #add_line_series("Plot", name='', x=[0, 10], y=[0, 0], weight=0, axis=0)
+    #add_line_series("Plot", name='', x=[0, 1], y=[600, 600], weight=0, axis=0)
+    #add_line_series("Plot", name='', x=[0, 1], y=[-1, -1], weight=0, axis=1)
+    #add_line_series("Plot", name='', x=[0, 1], y=[100, 100], weight=0, axis=1)
     set_render_callback(render_call)
+
     start_dearpygui(primary_window="Main Window")

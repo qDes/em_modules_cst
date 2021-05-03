@@ -140,7 +140,7 @@ class Plotter:
         self.x4.append(self.counter)   
 
 
-        if len(self.x1) > 100:
+        if len(self.x1) > 1000:
             self.x1 = self.x1[1:]
             self.x2 = self.x2[1:]
             self.x3 = self.x3[1:]
