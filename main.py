@@ -13,6 +13,7 @@ COUNTER = 0
 
 def connect(sender, data):
     global udp
+    configure_item("Address", enabled=False)
     udp.enable = True
     address = get_value("address")
     # port = get_value("port")
@@ -22,6 +23,7 @@ def connect(sender, data):
 
 def disconnect(sender, data):
     global udp
+    configure_item("Address", enabled=True)
     udp.enable = False
 
 
@@ -56,19 +58,20 @@ def get_data(sender, data):
 
 def plot_callback():
     global udp, plot, COUNTER
+    '''
     COUNTER += 1
 
     if COUNTER % 3 != 0:
         print(COUNTER)
         return
-
+    '''
     if udp.enable:
         x = udp.send()
         if not x:
             return
         x1, x2 = x[0], x[1]
-        x2 *= 10
-        plot.update(x1, x2)
+        x2 *= 100
+        plot.update(get_delta_time(), x1, x2)
 
         clear_plot("Plot")
         add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
@@ -123,6 +126,7 @@ def start_record():
 
 
 def stop_record():
+    print(is_item_clicked("mode"))
     recorder.stop()
 
 
@@ -172,7 +176,7 @@ with window("Main Window"):
             add_button("Close", callback=close_help)
 
     add_same_line()
-    add_plot("Plot", height=-1, yaxis2=True, yaxis_lock_min=True, yaxis_lock_max=True, y2axis_lock_max=True, y2axis_lock_min=True)
+    add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
 
 
 def render_call(sender, data):

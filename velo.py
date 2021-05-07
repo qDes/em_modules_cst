@@ -40,7 +40,8 @@ def plot_callback():
         if not x:
             return
         x1, x2 = x[0], x[1]
-        plot.update(x1, x2)
+        x2 = x2 % 360
+        plot.update(get_delta_time(), x1, x2)
         clear_plot("Plot")
         add_line_series("Plot", "F", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "angle", plot.x2, plot.y2, weight=2, axis=1)
@@ -101,8 +102,8 @@ def stop_record():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        #add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -136,7 +137,7 @@ with window("Main Window"):
 
     add_same_line()
 
-    add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F, angle", yaxis2=True)
+    add_plot("Plot", height=-1, x_axis_name="Training time, s", yaxis2=True)
 
 if __name__ == "__main__":
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")

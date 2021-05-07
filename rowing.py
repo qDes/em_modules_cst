@@ -56,7 +56,7 @@ def plot_callback():
         if not y:
             return
         y1, y2, y3, y4 = y[0], y[1], y[5], y[6]
-        plot.update(y1, y2, y3, y4)
+        plot.update(get_delta_time(), y1, y2, y3, y4)
         clear_plot("Plot")
         add_line_series("Plot", "F0", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "pos0", plot.x2, plot.y2, weight=2, axis=1)
@@ -138,7 +138,7 @@ with window("Main Window"):
             add_button("Close", callback=close_help)
 
     add_same_line()
-    add_plot("Plot", height=-1, x_axis_name="Counter", y_axis_name="F0, pos0, F1, pos1", yaxis2=True)
+    add_plot("Plot", height=-1, x_axis_name="Training time, s", yaxis2=True)
 
 if __name__ == "__main__":
     i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")

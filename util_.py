@@ -36,7 +36,7 @@ class UDP:
         # self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_send.bind(('0.0.0.0', 5550))
         # self.sock_recv.settimeout(2)
-        self.sock_send.settimeout(2)
+        self.sock_send.settimeout(1)
 
         self.F0 = 0
         self.F1 = 0
@@ -81,25 +81,30 @@ class UDP:
     def send(self):
         # addr = ("192.168.0.193", 5500)
         addr = (self.ip, 5500)
-        try:
-            self.sock_send.sendto(self.pack, addr)
-            data, ip = self.sock_send.recvfrom(2048)
-            data = struct.unpack(">3c10f", data)
-            self.F0 = data[3]
-            self.F1 = data[4]
-            self.F2 = data[5]
-            self.F3 = data[6]
-            self.F4 = data[7]
-            self.F5 = data[8]
-            self.F6 = data[9]
-            self.F7 = data[10]
-            self.F8 = data[11]
-            self.F9 = data[12]
-            return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9
-        except socket.timeout:
-            print("timeout")
-            self.enable = False
-            return None
+        send_counter = 0
+        while True:
+            try:
+                self.sock_send.sendto(self.pack, addr)
+                data, ip = self.sock_send.recvfrom(2048)
+                data = struct.unpack(">3c10f", data)
+                self.F0 = data[3]
+                self.F1 = data[4]
+                self.F2 = data[5]
+                self.F3 = data[6]
+                self.F4 = data[7]
+                self.F5 = data[8]
+                self.F6 = data[9]
+                self.F7 = data[10]
+                self.F8 = data[11]
+                self.F9 = data[12]
+                return self.F0, self.F1, self.F2, self.F3, self.F4, self.F5, self.F6, self.F7, self.F8, self.F9
+            except socket.timeout:
+                send_counter += 1
+                print(f"timeout, {send_counter} try")
+                if send_counter > 4:
+                    break
+        self.enable = False
+        return None
 
     def connect(self, ip):
         self.ip = ip
@@ -119,28 +124,31 @@ class Plotter:
         self.y4 = []
 
         self.counter = 0
+        self.lim = 1000
+        self.time = 0
 
-    def update(self, y1=0, y2=0, y3=0, y4=0):
+    def update(self, dx=0, y1=0, y2=0, y3=0, y4=0):
         self.counter += 1
-        ts = int(datetime.datetime.now().timestamp())
+        self.time += dx
 
         self.y1.append(y1)
         self.y2.append(y2)
         self.y3.append(y3)
         self.y4.append(y4)
-        '''
-        self.x1.append(ts)
-        self.x2.append(ts)
-        self.x3.append(ts)
-        self.x4.append(ts)
+
+        self.x1.append(self.time)
+        self.x2.append(self.time)
+        self.x3.append(self.time)
+        self.x4.append(self.time)
+
         '''
         self.x1.append(self.counter)
         self.x2.append(self.counter)
         self.x3.append(self.counter)
         self.x4.append(self.counter)   
+        '''
 
-
-        if len(self.x1) > 1000:
+        if len(self.x1) > self.lim:
             self.x1 = self.x1[1:]
             self.x2 = self.x2[1:]
             self.x3 = self.x3[1:]
