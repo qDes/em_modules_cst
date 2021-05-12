@@ -3,6 +3,7 @@ config.py
 .idea
 *.swp
 *.icloud
+screenshots/*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
