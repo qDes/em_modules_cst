@@ -1,7 +1,9 @@
+import datetime
 import json
 
 from dearpygui.core import *
 from dearpygui.simple import *
+import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
@@ -10,6 +12,7 @@ HELP = "/Users/a18351639/projects/em_modules_cst/params/main.help"
 RECORD_DIR = "/Users/a18351639/projects/em_modules_cst/plots"
 
 COUNTER = 0
+
 
 def connect(sender, data):
     global udp
@@ -30,7 +33,8 @@ def disconnect(sender, data):
 def setup_params(sender, data):
     i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
         "", "")
-    print(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
+    print(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5,
+          v_mode6, kD_mode6, pow_mode6)
     udp.update_params(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
                       d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
 
@@ -66,14 +70,14 @@ def plot_callback():
         return
     '''
     if udp.enable:
-        x = udp.send()
-        if not x:
+        y = udp.send()
+        if not y:
             return
-        x1, x2 = x[0], x[1]
-        x2 *= 100
-        plot.update(get_delta_time(), x1, x2)
+        y1, y2 = y[0], y[1]
+        y2 *= 100
+        plot.update(get_delta_time(), y1, y2)
 
-        clear_plot("Plot")
+        # clear_plot("Plot")
         add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
 
@@ -82,8 +86,10 @@ def plot_callback():
         add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
 
+        add_line_series("Plot1", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
+
         if recorder.is_saving:
-            recorder.get_data(x1, x2)
+            recorder.get_data(y1, y2)
 
 
 def save_params(sender, data):
@@ -122,12 +128,28 @@ def load_params(sender, data):
 
 
 def start_record():
+    configure_item("Start record", enabled=False)
     recorder.start()
 
 
 def stop_record():
-    print(is_item_clicked("mode"))
+    configure_item("Start record", enabled=True)
     recorder.stop()
+
+
+def make_screenshot():
+    # grab fullscreen
+    im = ImageGrab.grab()
+
+    # save image file
+    im.save(f"/Users/a18351639/projects/em_modules_cst/screenshots/main_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+
+
+def set_plot_time():
+    clear_plot("Plot")
+    plot_len = int(get_value("plot_time"))*50
+    plot.update_limit(plot_len)
+    plot.lim = plot_len
 
 
 with window("Main Window"):
@@ -140,7 +162,7 @@ with window("Main Window"):
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
-        add_text("Model params")
+        add_text("Model parameters")
         add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6", "7", "8"])
         add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
         add_input_text("F_set", source="F_set", default_value="10.0", width=200)
@@ -159,16 +181,21 @@ with window("Main Window"):
         add_input_text("kD_mode6", source="kD_mode6", default_value="0.0", width=200)
         add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
 
-        add_button("Set params", callback=setup_params)
-        add_spacing(count=10)
-        add_button("Save params", callback=save_params)
-        add_button("Load params", callback=load_params)
-        add_spacing(count=10)
+        add_button("Set parameters", callback=setup_params)
+        add_spacing(count=3)
+        add_button("Save parameters", callback=save_params)
+        add_button("Load parameters", callback=load_params)
+        add_spacing(count=3)
         add_button("Start record", callback=start_record)
         add_button("Stop record", callback=stop_record)
-        add_spacing(count=10)
+        add_spacing(count=3)
         add_button("Help")
+        add_spacing(count=3)
+        add_button("Screenshot", callback=make_screenshot)
 
+        add_spacing(count=3)
+        add_input_text("s", source="plot_time", default_value="10", width=50)
+        add_button("Set plot time", callback=set_plot_time)
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
                 help_data = my_file.read()
@@ -176,11 +203,25 @@ with window("Main Window"):
             add_button("Close", callback=close_help)
 
     add_same_line()
-    add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
+    with tab_bar("Plots"):
+        with tab("Plot 1"):
+            add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
+        with tab("Plot 2"):
+            add_plot("Plot1", height=-1, yaxis2=True, x_axis_name="Training time, s")
+
+click_check = False
 
 
 def render_call(sender, data):
+    global click_check
     plot_callback()
+
+    if is_item_clicked("mode"):
+        click_check = True
+        return
+    if click_check:
+        print(get_value("i0"))
+        click_check = False
 
 
 if __name__ == "__main__":
@@ -191,10 +232,10 @@ if __name__ == "__main__":
     plot = Plotter()
     recorder = PlotSaver(RECORD_DIR, "main")
     set_main_window_title("Universal/Inclided")
-    #add_line_series("Plot", name='', x=[0, 10], y=[0, 0], weight=0, axis=0)
-    #add_line_series("Plot", name='', x=[0, 1], y=[600, 600], weight=0, axis=0)
-    #add_line_series("Plot", name='', x=[0, 1], y=[-1, -1], weight=0, axis=1)
-    #add_line_series("Plot", name='', x=[0, 1], y=[100, 100], weight=0, axis=1)
+    # add_line_series("Plot", name='', x=[0, 10], y=[0, 0], weight=0, axis=0)
+    # add_line_series("Plot", name='', x=[0, 1], y=[600, 600], weight=0, axis=0)
+    # add_line_series("Plot", name='', x=[0, 1], y=[-1, -1], weight=0, axis=1)
+    # add_line_series("Plot", name='', x=[0, 1], y=[100, 100], weight=0, axis=1)
     set_render_callback(render_call)
 
     start_dearpygui(primary_window="Main Window")
