@@ -36,7 +36,7 @@ class UDP:
         # self.sock_recv = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock_send.bind(('0.0.0.0', 5550))
         # self.sock_recv.settimeout(2)
-        self.sock_send.settimeout(1)
+        self.sock_send.settimeout(0.1)
 
         self.F0 = 0
         self.F1 = 0
@@ -123,13 +123,28 @@ class Plotter:
         self.y3 = []
         self.y4 = []
 
+        self.p1 = []
+        self.p2 = []
+        self.px = []
+
         self.counter = 0
         self.lim = 1000
         self.time = 0
 
     def update(self, dx=0, y1=0, y2=0, y3=0, y4=0):
+
         self.counter += 1
         self.time += dx
+        # y1 - Force
+        # y2 - distance
+        # power calc
+        if len(self.y2) > 0:
+
+            velocity = (y2 - self.y2[-1]) / (100 * dx)
+            self.p1.append(abs(velocity*y1))
+            self.px.append(self.time)
+            velocity = (y4 - self.y4[-1]) / (100 * dx)
+            self.p2.append(abs(velocity*y3))
 
         self.y1.append(y1)
         self.y2.append(y2)
@@ -141,13 +156,6 @@ class Plotter:
         self.x3.append(self.time)
         self.x4.append(self.time)
 
-        '''
-        self.x1.append(self.counter)
-        self.x2.append(self.counter)
-        self.x3.append(self.counter)
-        self.x4.append(self.counter)   
-        '''
-
         if len(self.x1) > self.lim:
             self.x1 = self.x1[1:]
             self.x2 = self.x2[1:]
@@ -158,6 +166,23 @@ class Plotter:
             self.y2 = self.y2[1:]
             self.y3 = self.y3[1:]
             self.y4 = self.y4[1:]
+
+            self.p1 = self.p1[1:]
+            self.px = self.px[1:]
+
+    def update_limit(self, value):
+        if value < self.lim:
+            value += 1
+            value *= -1
+            self.x1 = self.x1[value:]
+            self.x2 = self.x2[value:]
+            self.x3 = self.x3[value:]
+            self.x4 = self.x4[value:]
+
+            self.y1 = self.y1[value:]
+            self.y2 = self.y2[value:]
+            self.y3 = self.y3[value:]
+            self.y4 = self.y4[value:]
 
 
 class PlotSaver:
@@ -177,7 +202,7 @@ class PlotSaver:
             return None
 
         self.is_saving = True
-        self.my_file = self.directory+f'/{self.name}_{datetime.datetime.now().strftime("%y-%m-%d_%H-%M-%S")}.csv'
+        self.my_file = self.directory + f'/{self.name}_{datetime.datetime.now().strftime("%y-%m-%d_%H-%M-%S")}.csv'
         with open(self.my_file, 'w+') as my_file:
             pass
 
@@ -196,7 +221,6 @@ class PlotSaver:
 
         if len(self.ts) > 100:
             self.__save()
-
 
     def __save(self):
         with open(self.my_file, 'a+') as my_file:
