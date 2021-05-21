@@ -131,6 +131,9 @@ class Plotter:
         self.lim = 1000
         self.time = 0
 
+        self.total_power_0 = 0
+        self.total_power_1 = 0
+
     def update(self, dx=0, y1=0, y2=0, y3=0, y4=0):
 
         self.counter += 1
@@ -142,9 +145,11 @@ class Plotter:
 
             velocity = (y2 - self.y2[-1]) / (100 * dx)
             self.p1.append(abs(velocity*y1))
+            self.total_power_0 += abs(velocity*y1)
             self.px.append(self.time)
             velocity = (y4 - self.y4[-1]) / (100 * dx)
             self.p2.append(abs(velocity*y3))
+            self.total_power_1 = abs(velocity*y3)
 
         self.y1.append(y1)
         self.y2.append(y2)

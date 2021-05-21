@@ -77,7 +77,8 @@ def plot_callback():
         y2 *= 100
         plot.update(get_delta_time(), y1, y2)
 
-        # clear_plot("Plot")
+        # clear_plot("Plot1")
+
         add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
 
@@ -87,6 +88,7 @@ def plot_callback():
         add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
 
         add_line_series("Plot1", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
+        # add_line_series("Plot1", name=f'Total power {plot.total_power_0}, W', x=plot.px, y=[0 for x in plot.px], weight=0, axis=0)
 
         if recorder.is_saving:
             recorder.get_data(y1, y2)
@@ -142,12 +144,13 @@ def make_screenshot():
     im = ImageGrab.grab()
 
     # save image file
-    im.save(f"/Users/a18351639/projects/em_modules_cst/screenshots/main_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+    im.save(
+        f"/Users/a18351639/projects/em_modules_cst/screenshots/main_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 def set_plot_time():
     clear_plot("Plot")
-    plot_len = int(get_value("plot_time"))*50
+    plot_len = int(get_value("plot_time")) * 50
     plot.update_limit(plot_len)
     plot.lim = plot_len
 
@@ -163,7 +166,15 @@ with window("Main Window"):
         add_button("Disconnect", callback=disconnect)
         ## Params
         add_text("Model parameters")
-        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2", "3", "4", "5", "6", "7", "8"])
+        add_listbox("mode", source="i0", default_value=0, items=["0. Disabled",
+                                                                 "1. Constant position with vibration",
+                                                                 "2. Mass mode",
+                                                                 "3. Constant velocity",
+                                                                 "4. Overpowering mode",
+                                                                 "5. Friction mode",
+                                                                 "6. User mode",
+                                                                 "7. Viscosity",
+                                                                 "8. Mass mode InerciaFree"])
         add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
         add_input_text("F_set", source="F_set", default_value="10.0", width=200)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
