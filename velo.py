@@ -131,13 +131,13 @@ def set_plot_time():
 
 with window("Main Window"):
     with group("Left Panel", width=250):
-        add_text("Connection params")
+        add_text("Connection parameters")
         # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
         add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
-        add_text("Model params")
+        add_text("Model parameters")
         add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"])
         add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200)
         add_input_text("friction, N", source="friction", default_value="10.0", width=200)
