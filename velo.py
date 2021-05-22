@@ -5,7 +5,6 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-
 from util_ import Plotter, UDP, PlotSaver
 
 PARAMS = "/Users/a18351639/projects/em_modules_cst/params/velo.json"
@@ -56,7 +55,7 @@ def plot_callback():
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
-        add_line_series("Plot1", name='Power, W', x=plot.px, y=[y*l for y in plot.p1], weight=2, axis=0)
+        add_line_series("Plot1", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0)
 
         if recorder.is_saving:
             recorder.get_data(x1, x2)
@@ -123,6 +122,13 @@ def make_screenshot():
         f"/Users/a18351639/projects/em_modules_cst/screenshots/velo_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
+def set_plot_time():
+    clear_plot("Plot")
+    plot_len = int(get_value("plot_time")) * 50
+    plot.update_limit(plot_len)
+    plot.lim = plot_len
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection params")
@@ -154,7 +160,9 @@ with window("Main Window"):
         add_button("Help")
         add_spacing(count=3)
         add_button("Screenshot", callback=make_screenshot)
-
+        add_spacing(count=3)
+        add_input_text("s", source="plot_time", default_value="10", width=50)
+        add_button("Set plot time", callback=set_plot_time)
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
                 help_data = my_file.read()
