@@ -1,7 +1,10 @@
+import datetime
 import json
 
 from dearpygui.core import *
 from dearpygui.simple import *
+import pyscreenshot as ImageGrab
+
 
 from util_ import Plotter, UDP, PlotSaver
 
@@ -42,9 +45,19 @@ def plot_callback():
         x1, x2 = x[0], x[1]
         x2 = x2 % 360
         plot.update(get_delta_time(), x1, x2)
-        clear_plot("Plot")
-        add_line_series("Plot", "F", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot", "angle", plot.x2, plot.y2, weight=2, axis=1)
+        # clear_plot("Plot")
+        add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
+
+        add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
+        add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+
+        # multiple by l - length of velo rod due to get moment
+        l = 0.25
+        add_line_series("Plot1", name='Power, W', x=plot.px, y=[y*l for y in plot.p1], weight=2, axis=0)
+
         if recorder.is_saving:
             recorder.get_data(x1, x2)
 
@@ -92,11 +105,22 @@ def close_help():
 
 
 def start_record():
+    configure_item("Start record", enabled=False)
     recorder.start()
 
 
 def stop_record():
+    configure_item("Start record", enabled=True)
     recorder.stop()
+
+
+def make_screenshot():
+    # grab fullscreen
+    im = ImageGrab.grab()
+
+    # save image file
+    im.save(
+        f"/Users/a18351639/projects/em_modules_cst/screenshots/velo_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 with window("Main Window"):
@@ -119,15 +143,17 @@ with window("Main Window"):
         add_input_text("kPedal", source="kPedal", default_value="0.0", width=200)
         add_input_text("calib", source="calib", default_value="0.0", width=200)
 
-        add_button("Set params", callback=setup_params)
-        add_spacing(count=10)
-        add_button("Save params", callback=save_params)
-        add_button("Load params", callback=load_params)
-        add_spacing(count=10)
+        add_button("Set parameters", callback=setup_params)
+        add_spacing(count=3)
+        add_button("Save parameters", callback=save_params)
+        add_button("Load parameters", callback=load_params)
+        add_spacing(count=3)
         add_button("Start record", callback=start_record)
         add_button("Stop record", callback=stop_record)
-        add_spacing(count=10)
+        add_spacing(count=3)
         add_button("Help")
+        add_spacing(count=3)
+        add_button("Screenshot", callback=make_screenshot)
 
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
@@ -137,7 +163,11 @@ with window("Main Window"):
 
     add_same_line()
 
-    add_plot("Plot", height=-1, x_axis_name="Training time, s", yaxis2=True)
+    with tab_bar("Plots"):
+        with tab("Plot 1"):
+            add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
+        with tab("Plot 2"):
+            add_plot("Plot1", height=-1, yaxis2=True, x_axis_name="Training time, s")
 
 if __name__ == "__main__":
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
