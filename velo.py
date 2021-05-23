@@ -7,8 +7,8 @@ import pyscreenshot as ImageGrab
 
 from util_ import Plotter, UDP, PlotSaver
 
-ROOT_DIR = "/home/lar/Desktop"
-# ROOT_DIR = "/Users/a18351639/projects"
+# ROOT_DIR = "/home/lar/Desktop"
+ROOT_DIR = "/Users/a18351639/projects"
 PARAMS = f"{ROOT_DIR}/em_modules_cst/params/velo.json"
 HELP = f"{ROOT_DIR}/em_modules_cst/params/velo.help"
 RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
@@ -46,14 +46,16 @@ def plot_callback():
         x1, x2 = x[0], x[1]
         x2 = x2 % 360
         plot.update(get_delta_time(), x1, x2)
-        # clear_plot("Plot")
-        add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
 
         add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
         add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
         add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+        # clear_plot("Plot")
+        add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
+
+
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
@@ -134,8 +136,8 @@ def set_plot_time():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params

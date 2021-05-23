@@ -7,8 +7,8 @@ import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
-ROOT_DIR = "/home/lar/Desktop"
-# ROOT_DIR = "/Users/a18351639/projects"
+#ROOT_DIR = "/home/lar/Desktop"
+ROOT_DIR = "/Users/a18351639/projects"
 PARAMS = f"{ROOT_DIR}/em_modules_cst/params/rowing.json"
 HELP = f"{ROOT_DIR}/em_modules_cst/params/rowing.help"
 RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
@@ -132,8 +132,8 @@ with window("Main Window"):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection parameters")
 
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params

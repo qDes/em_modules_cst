@@ -7,8 +7,8 @@ import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
-ROOT_DIR = "/home/lar/Desktop"
-# ROOT_DIR = "/Users/a18351639/projects"
+# ROOT_DIR = "/home/lar/Desktop"
+ROOT_DIR = "/Users/a18351639/projects"
 PARAMS = f"{ROOT_DIR}/em_modules_cst/params/main.json"
 HELP = f"{ROOT_DIR}/em_modules_cst/params/main.help"
 RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
@@ -80,14 +80,13 @@ def plot_callback():
         plot.update(get_delta_time(), y1, y2)
 
         # clear_plot("Plot1")
-
-        add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
-
         add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
         add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
         add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+
+        add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
 
         add_line_series("Plot1", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         # add_line_series("Plot1", name=f'Total power {plot.total_power_0}, W', x=plot.px, y=[0 for x in plot.px], weight=0, axis=0)
@@ -161,8 +160,8 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
