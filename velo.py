@@ -7,7 +7,7 @@ import pyscreenshot as ImageGrab
 
 from util_ import Plotter, UDP, PlotSaver
 
-# ROOT_DIR = "/home/lar/Desktop/em_modules_cst"
+# ROOT_DIR = "/home/lar/Desktop"
 ROOT_DIR = "/Users/a18351639/projects"
 PARAMS = f"{ROOT_DIR}/em_modules_cst/params/velo.json"
 HELP = f"{ROOT_DIR}/em_modules_cst/params/velo.help"
