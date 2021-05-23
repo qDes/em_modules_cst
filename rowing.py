@@ -7,9 +7,10 @@ import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
-PARAMS = "/Users/a18351639/projects/em_modules_cst/params/rowing.json"
-HELP = "/Users/a18351639/projects/em_modules_cst/params/rowing.help"
-RECORD_DIR = "/Users/a18351639/projects/em_modules_cst/plots"
+ROOT_DIR = "/Users/a18351639/projects"
+PARAMS = f"{ROOT_DIR}/em_modules_cst/params/rowing.json"
+HELP = f"{ROOT_DIR}/em_modules_cst/params/rowing.help"
+RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
 
 
 def connect(sender, data):
@@ -115,7 +116,7 @@ def make_screenshot():
 
     # save image file
     im.save(
-        f"/Users/a18351639/projects/em_modules_cst/screenshots/rowing_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+        f"{ROOT_DIR}/em_modules_cst/screenshots/rowing_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 def set_plot_time():
