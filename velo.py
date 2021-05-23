@@ -7,8 +7,8 @@ import pyscreenshot as ImageGrab
 
 from util_ import Plotter, UDP, PlotSaver
 
-# ROOT_DIR = "/home/lar/Desktop"
-ROOT_DIR = "/Users/a18351639/projects"
+ROOT_DIR = "/home/lar/Desktop"
+# ROOT_DIR = "/Users/a18351639/projects"
 PARAMS = f"{ROOT_DIR}/em_modules_cst/params/velo.json"
 HELP = f"{ROOT_DIR}/em_modules_cst/params/velo.help"
 RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
@@ -134,8 +134,8 @@ def set_plot_time():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
