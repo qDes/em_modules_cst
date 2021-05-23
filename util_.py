@@ -173,6 +173,7 @@ class Plotter:
             self.y4 = self.y4[1:]
 
             self.p1 = self.p1[1:]
+            self.p2 = self.p2[1:]
             self.px = self.px[1:]
 
     def update_limit(self, value):
@@ -188,6 +189,10 @@ class Plotter:
             self.y2 = self.y2[value:]
             self.y3 = self.y3[value:]
             self.y4 = self.y4[value:]
+
+            self.p1 = self.p1[value:]
+            self.p2 = self.p2[value:]
+            self.px = self.px[value:]
 
 
 class PlotSaver:
