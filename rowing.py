@@ -69,7 +69,14 @@ def plot_callback():
 
         add_line_series("Plot2", name='Power1, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         add_line_series("Plot2", name='Power2, W', x=plot.px, y=plot.p2, weight=2, axis=0)
-        print(len(plot.p1), len(plot.p2), len(plot.px))
+
+
+        add_line_series("Plot_0", "F0", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Plot_0", "pos0", plot.x2, plot.y2, weight=2, axis=1)
+        add_line_series("Plot_1", "F1", plot.x3, plot.y3, weight=2, axis=0)
+        add_line_series("Plot_1", "pos1", plot.x4, plot.y4, weight=2, axis=1)
+
+        # print(len(plot.p1), len(plot.p2), len(plot.px))
 
         if recorder.is_saving:
             recorder.get_data(y1, y2, y3, y4)
@@ -174,11 +181,16 @@ with window("Main Window"):
 
     with tab_bar("Plots"):
         with tab("Plot 1"):
-            add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
+            with group("sasi"):
+                add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
         with tab("Plot 2"):
             add_plot("Plot1", height=-1, yaxis2=True, x_axis_name="Training time, s")
         with tab("Plot 3"):
             add_plot("Plot2", height=-1, yaxis2=True, x_axis_name="Training time, s")
+        with tab("Simple Plots"):
+            add_plot("Plot_0", yaxis2=True, x_axis_name="Training time, s", height=300)
+            add_plot("Plot_1", yaxis2=True, x_axis_name="Training time, s", height=300)
+
 
 if __name__ == "__main__":
     i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")

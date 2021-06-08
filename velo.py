@@ -47,10 +47,10 @@ def plot_callback():
         x2 = x2 % 360
         plot.update(get_delta_time(), x1, x2)
 
-        add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
-        add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+        # add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        # add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
+        # add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
+        # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
         add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
