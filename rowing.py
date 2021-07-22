@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from dearpygui.core import *
 from dearpygui.simple import *
@@ -7,11 +8,10 @@ import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
-#ROOT_DIR = "/home/lar/Desktop"
-ROOT_DIR = "/Users/a18351639/projects"
-PARAMS = f"{ROOT_DIR}/em_modules_cst/params/rowing.json"
-HELP = f"{ROOT_DIR}/em_modules_cst/params/rowing.help"
-RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
+ROOT_DIR = os.getcwd()
+PARAMS = f"{ROOT_DIR}/params/rowing.json"
+HELP = f"{ROOT_DIR}/params/rowing.help"
+RECORD_DIR = f"{ROOT_DIR}/plots"
 
 
 def connect(sender, data):
@@ -69,7 +69,6 @@ def plot_callback():
 
         add_line_series("Plot2", name='Power1, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         add_line_series("Plot2", name='Power2, W', x=plot.px, y=plot.p2, weight=2, axis=0)
-
 
         add_line_series("Plot_0", "F0", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot_0", "pos0", plot.x2, plot.y2, weight=2, axis=1)
@@ -139,8 +138,8 @@ with window("Main Window"):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection parameters")
 
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -190,7 +189,6 @@ with window("Main Window"):
         with tab("Simple Plots"):
             add_plot("Plot_0", yaxis2=True, x_axis_name="Training time, s", height=300)
             add_plot("Plot_1", yaxis2=True, x_axis_name="Training time, s", height=300)
-
 
 if __name__ == "__main__":
     i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")

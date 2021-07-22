@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from dearpygui.core import *
 from dearpygui.simple import *
@@ -7,11 +8,10 @@ import pyscreenshot as ImageGrab
 
 from util_ import Plotter, UDP, PlotSaver
 
-# ROOT_DIR = "/home/lar/Desktop"
-ROOT_DIR = "/Users/a18351639/projects"
-PARAMS = f"{ROOT_DIR}/em_modules_cst/params/velo.json"
-HELP = f"{ROOT_DIR}/em_modules_cst/params/velo.help"
-RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
+ROOT_DIR = os.getcwd()
+PARAMS = f"{ROOT_DIR}/params/velo.json"
+HELP = f"{ROOT_DIR}/params/velo.help"
+RECORD_DIR = f"{ROOT_DIR}/plots"
 
 
 def connect(sender, data):
@@ -54,8 +54,6 @@ def plot_callback():
         # clear_plot("Plot")
         add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
         add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
-
-
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
@@ -136,8 +134,8 @@ def set_plot_time():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params

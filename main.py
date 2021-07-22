@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 
 from dearpygui.core import *
 from dearpygui.simple import *
@@ -7,11 +8,10 @@ import pyscreenshot as ImageGrab
 
 from util_ import UDP, Plotter, PlotSaver
 
-# ROOT_DIR = "/home/lar/Desktop"
-ROOT_DIR = "/Users/a18351639/projects"
-PARAMS = f"{ROOT_DIR}/em_modules_cst/params/main.json"
-HELP = f"{ROOT_DIR}/em_modules_cst/params/main.help"
-RECORD_DIR = f"{ROOT_DIR}/em_modules_cst/plots"
+ROOT_DIR = os.getcwd()
+PARAMS = f"{ROOT_DIR}/params/main.json"
+HELP = f"{ROOT_DIR}/params/main.help"
+RECORD_DIR = f"{ROOT_DIR}/plots"
 
 COUNTER = 0
 
@@ -160,8 +160,8 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
         # add_input_text("Port", source="port", default_value="1234", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
