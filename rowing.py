@@ -6,7 +6,7 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import UDP, Plotter, PlotSaver
+from util_ import UDP, Plotter, PlotSaver, close_help
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/rowing.json"
@@ -101,10 +101,6 @@ def load_params(sender, data):
     set_value("m_inner", data['m_inner'])
     set_value("kOut_mode0", data['kOut_mode0'])
     set_value("kOut_mode1", data['kOut_mode1'])
-
-
-def close_help():
-    close_popup("Help Popup")
 
 
 def start_record():

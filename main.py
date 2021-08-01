@@ -6,7 +6,7 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import UDP, Plotter, PlotSaver
+from util_ import UDP, Plotter, PlotSaver, close_help
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/main.json"
@@ -103,10 +103,6 @@ def save_params(sender, data):
                   g_mode5=g_mode5, v_mode6=v_mode6, kD_mode6=kD_mode6, pow_mode6=pow_mode6)
     with open(PARAMS, "w") as my_file:
         my_file.write(json.dumps(params))
-
-
-def close_help():
-    close_popup("Help Popup")
 
 
 def load_params(sender, data):
