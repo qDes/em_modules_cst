@@ -15,8 +15,8 @@ RECORD_DIR = f"{ROOT_DIR}/plots"
 
 POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
                                 "Start record", "Stop record", "Set plot time", "s"]
-MODEL_PARAMS = ["p_set, deg.", "friction, N", "kShaker", "Shaker_limit, m", "F_set, N", "shaker_freqp, Hz",
-                "m_inner, kg", "kPedal", "calib"]
+MODEL_PARAMS = ["m_inner, kg", "friction, N", "kPedal", "calib", "kShaker", "Shaker_limit, m", "F_set, N",
+                "shaker_freqp, Hz", "p_set, deg."]
 
 
 def connect(sender, data):
@@ -26,7 +26,7 @@ def connect(sender, data):
     # port = get_value("port")
     udp.connect(address)
     print(address)
-    enable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+    enable_items(POST_CONNECTION_COMMON_ITEMS)
     disable_items(["Connect", "Address"])
 
 
@@ -138,16 +138,28 @@ def set_plot_time():
     plot.lim = plot_len
 
 
+def select_mode():
+    mode = int(get_value("i0"))
+    if mode == 0:
+        disable_items(MODEL_PARAMS)
+    elif mode == 1:
+        disable_items(MODEL_PARAMS)
+        enable_items(MODEL_PARAMS[:4])
+    elif mode == 2:
+        enable_items(MODEL_PARAMS)
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
         add_text("Model parameters")
-        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"], enabled=False)
+        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"], enabled=False, num_items=3,
+                    callback=select_mode)
         add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200, enabled=False)
         add_input_text("friction, N", source="friction", default_value="10.0", width=200, enabled=False)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
