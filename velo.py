@@ -6,12 +6,17 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import Plotter, UDP, PlotSaver
+from util_ import Plotter, UDP, PlotSaver, disable_items, enable_items, close_help
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/velo.json"
 HELP = f"{ROOT_DIR}/params/velo.help"
 RECORD_DIR = f"{ROOT_DIR}/plots"
+
+POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
+                                "Start record", "Stop record", "Set plot time", "s"]
+MODEL_PARAMS = ["p_set, deg.", "friction, N", "kShaker", "Shaker_limit, m", "F_set, N", "shaker_freqp, Hz",
+                "m_inner, kg", "kPedal", "calib"]
 
 
 def connect(sender, data):
@@ -21,6 +26,8 @@ def connect(sender, data):
     # port = get_value("port")
     udp.connect(address)
     print(address)
+    enable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+    disable_items(["Connect", "Address"])
 
 
 def disconnect(sender, data):
@@ -31,10 +38,6 @@ def disconnect(sender, data):
 def setup_params(sender, data):
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
     udp.update_params(i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib)
-
-
-def render_call(sender, data):
-    plot_callback()
 
 
 def plot_callback():
@@ -101,8 +104,12 @@ def load_params(sender, data):
     set_value("calib", data['calib'])
 
 
-def close_help():
-    close_popup("Help Popup")
+def render_call(sender, data):
+    global udp
+    if not udp.enable:
+        enable_items(["Connect", "Address"])
+        disable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+    plot_callback()
 
 
 def start_record():
@@ -135,36 +142,36 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
         add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
-        add_button("Disconnect", callback=disconnect)
+        add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
         add_text("Model parameters")
-        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"])
-        add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200)
-        add_input_text("friction, N", source="friction", default_value="10.0", width=200)
-        add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
-        add_input_text("Shaker_limit, m", source="shaker_limit", default_value="0.1", width=200)
-        add_input_text("F_set, N", source="F_set", default_value="20.0", width=200)
-        add_input_text("shaker_freqp, Hz", source="shaker_freqp", default_value="1.0", width=200)
-        add_input_text("m_inner, kg", source="m_inner", default_value="1.0", width=200)
-        add_input_text("kPedal", source="kPedal", default_value="0.0", width=200)
-        add_input_text("calib", source="calib", default_value="0.0", width=200)
+        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"], enabled=False)
+        add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200, enabled=False)
+        add_input_text("friction, N", source="friction", default_value="10.0", width=200, enabled=False)
+        add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
+        add_input_text("Shaker_limit, m", source="shaker_limit", default_value="0.1", width=200, enabled=False)
+        add_input_text("F_set, N", source="F_set", default_value="20.0", width=200, enabled=False)
+        add_input_text("shaker_freqp, Hz", source="shaker_freqp", default_value="1.0", width=200, enabled=False)
+        add_input_text("m_inner, kg", source="m_inner", default_value="1.0", width=200, enabled=False)
+        add_input_text("kPedal", source="kPedal", default_value="0.0", width=200, enabled=False)
+        add_input_text("calib", source="calib", default_value="0.0", width=200, enabled=False)
 
-        add_button("Set parameters", callback=setup_params)
+        add_button("Set parameters", callback=setup_params, enabled=False)
         add_spacing(count=3)
-        add_button("Save parameters", callback=save_params)
-        add_button("Load parameters", callback=load_params)
+        add_button("Save parameters", callback=save_params, enabled=False)
+        add_button("Load parameters", callback=load_params, enabled=False)
         add_spacing(count=3)
-        add_button("Start record", callback=start_record)
-        add_button("Stop record", callback=stop_record)
+        add_button("Start record", callback=start_record, enabled=False)
+        add_button("Stop record", callback=stop_record, enabled=False)
         add_spacing(count=3)
         add_button("Help")
         add_spacing(count=3)
         add_button("Screenshot", callback=make_screenshot)
         add_spacing(count=3)
-        add_input_text("s", source="plot_time", default_value="10", width=50)
-        add_button("Set plot time", callback=set_plot_time)
+        add_input_text("s", source="plot_time", default_value="10", width=50, enabled=False)
+        add_button("Set plot time", callback=set_plot_time, enabled=False)
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
                 help_data = my_file.read()
