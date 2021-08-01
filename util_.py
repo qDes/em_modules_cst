@@ -3,6 +3,8 @@ import datetime
 import socket
 import struct
 
+from dearpygui.core import configure_item, close_popup
+
 
 class UDP:
     def __init__(self, i0=0, f1=0, f2=0, f3=0, f4=0, f5=0, f6=0, f7=0, f8=0, f9=0, f10=0, f11=0, f12=0, f13=0, f14=0,
@@ -142,14 +144,13 @@ class Plotter:
         # y2 - distance
         # power calc
         if len(self.y2) > 0:
-
             velocity = (y2 - self.y2[-1]) / (100 * dx)
-            self.p1.append(abs(velocity*y1))
-            self.total_power_0 += abs(velocity*y1)
+            self.p1.append(abs(velocity * y1))
+            self.total_power_0 += abs(velocity * y1)
             self.px.append(self.time)
             velocity = (y4 - self.y4[-1]) / (100 * dx)
-            self.p2.append(abs(velocity*y3))
-            self.total_power_1 = abs(velocity*y3)
+            self.p2.append(abs(velocity * y3))
+            self.total_power_1 = abs(velocity * y3)
 
         self.y1.append(y1)
         self.y2.append(y2)
@@ -245,3 +246,17 @@ class PlotSaver:
         self.param3 = []
         self.param4 = []
         self.ts = []
+
+
+def enable_items(items):
+    for item in items:
+        configure_item(item, enabled=True)
+
+
+def disable_items(items):
+    for item in items:
+        configure_item(item, enabled=False)
+
+
+def close_help():
+    close_popup("Help Popup")
