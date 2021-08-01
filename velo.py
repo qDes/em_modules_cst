@@ -47,7 +47,7 @@ def plot_callback():
         if not x:
             return
         x1, x2 = x[0], x[1]
-        x2 = x2 % 360
+        x2 = x2 % 360 - 180
         plot.update(get_delta_time(), x1, x2)
 
         # add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
@@ -56,11 +56,11 @@ def plot_callback():
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
         add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
+        add_line_series("Plot1", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
-        add_line_series("Plot1", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0)
+        add_line_series("Plot2", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0)
 
         if recorder.is_saving:
             recorder.get_data(x1, x2)
@@ -152,8 +152,8 @@ def select_mode():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
@@ -191,12 +191,19 @@ with window("Main Window"):
             add_button("Close", callback=close_help)
 
     add_same_line()
-
+    '''
     with tab_bar("Plots"):
         with tab("Plot 1"):
             add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
         with tab("Plot 2"):
             add_plot("Plot1", height=-1, yaxis2=True, x_axis_name="Training time, s")
+    '''
+    with tab_bar("Plots"):
+        with tab("Plot 1"):
+            add_plot("Plot", x_axis_name="Training time, s", height=350)
+            add_plot("Plot1", x_axis_name="Training time, s", height=350)
+        with tab("Plot 2"):
+            add_plot("Plot2", height=-1, x_axis_name="Training time, s")
 
 if __name__ == "__main__":
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
