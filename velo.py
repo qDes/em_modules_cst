@@ -56,7 +56,7 @@ def plot_callback():
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
         add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot1", "angle, deg", plot.x2, plot.y2, weight=2, axis=1)
+        add_line_series("Plot1", "angle, deg", plot.x2, plot.y2, weight=2, axis=0)
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
