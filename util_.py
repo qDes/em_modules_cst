@@ -260,3 +260,8 @@ def disable_items(items):
 
 def close_help():
     close_popup("Help Popup")
+
+
+def disable_readonly(items):
+    for item in items:
+        configure_item(item, readonly=False)

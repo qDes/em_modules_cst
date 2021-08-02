@@ -6,7 +6,7 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import Plotter, UDP, PlotSaver, disable_items, enable_items, close_help
+from util_ import Plotter, UDP, PlotSaver, disable_items, enable_items, close_help, disable_readonly
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/velo.json"
@@ -28,6 +28,7 @@ def connect(sender, data):
     print(address)
     enable_items(POST_CONNECTION_COMMON_ITEMS)
     disable_items(["Connect", "Address"])
+    disable_readonly(MODEL_PARAMS)
 
 
 def disconnect(sender, data):
@@ -55,12 +56,15 @@ def plot_callback():
         # add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
+
         add_line_series("Plot", "F, N", plot.x1, plot.y1, weight=2, axis=0)
+        # TODO: добавить границы -180 180
         add_line_series("Plot1", "angle, deg", plot.x2, plot.y2, weight=2, axis=0)
 
         # multiple by l - length of velo rod due to get moment
         l = 0.25
-        add_line_series("Plot2", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0)
+        add_line_series("Plot2", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0,
+                        color=[255, 0, 0, -1])
 
         if recorder.is_saving:
             recorder.get_data(x1, x2)
@@ -106,9 +110,11 @@ def load_params(sender, data):
 
 def render_call(sender, data):
     global udp
+
     if not udp.enable:
         enable_items(["Connect", "Address"])
         disable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+        set_value("i0", 0)
     plot_callback()
 
 
@@ -152,15 +158,16 @@ def select_mode():
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
         add_text("Model parameters")
         add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"], enabled=False, num_items=3,
                     callback=select_mode)
-        add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200, enabled=False)
+        add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200,
+                       readonly=False)  # , enabled=False)
         add_input_text("friction, N", source="friction", default_value="10.0", width=200, enabled=False)
         add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
         add_input_text("Shaker_limit, m", source="shaker_limit", default_value="0.1", width=200, enabled=False)
