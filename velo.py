@@ -58,8 +58,7 @@ def plot_callback():
         x1, x2 = x[0], x[1]
         x2 = x2 % 360 - 180
         x3 = x2 % 360 - 180
-        plot.update(get_delta_time(), x1, x2, x2)
-        print(x2, x3)
+        plot.update(get_delta_time(), x1, x2, x3)
 
         # add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
         # add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
@@ -70,7 +69,7 @@ def plot_callback():
         add_line_series("Force", "F, N", plot.x1, plot.y1, weight=2, axis=0, color=[255, 0, 0])
         # TODO: добавить границы -180 180
         add_line_series("Pedal Angle", "angle left, deg", plot.x2, plot.y2, weight=2, axis=0)
-        # add_line_series("Pedal Angle", "angle right, deg", plot.x2, plot.x3, weight=2, axis=0)
+        add_line_series("Pedal Angle", "angle right, deg", plot.x2, plot.y3, weight=2, axis=0)
         add_line_series("Pedal Angle", name='', x=plot.x2, y=[-180 for x in plot.x2], weight=0, axis=0)
         add_line_series("Pedal Angle", name='', x=plot.x2, y=[180 for x in plot.x2], weight=0, axis=0)
         # multiple by l - length of velo rod due to get moment
