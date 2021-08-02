@@ -151,8 +151,10 @@ def select_mode():
     elif mode == 1:
         disable_items(MODEL_PARAMS)
         enable_items(MODEL_PARAMS[:4])
+        disable_readonly(MODEL_PARAMS[:4])
     elif mode == 2:
         enable_items(MODEL_PARAMS)
+        disable_readonly(MODEL_PARAMS)
 
 
 with window("Main Window"):
