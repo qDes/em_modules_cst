@@ -215,7 +215,7 @@ class PlotSaver:
         self.is_saving = True
         self.my_file = self.directory + f'/{self.name}_{datetime.datetime.now().strftime("%y-%m-%d_%H-%M-%S")}.csv'
         with open(self.my_file, 'w+') as my_file:
-            pass
+            my_file.write(datetime.datetime.now().strftime("%y-%m-%d_%H-%M-%S"))
 
     def stop(self):
         self.is_saving = False

@@ -149,7 +149,7 @@ def make_screenshot():
 
 
 def set_plot_time():
-    clear_plot("Plot")
+    clear_plot("Force")
     plot_len = int(get_value("plot_time")) * 50
     plot.update_limit(plot_len)
     plot.lim = plot_len
@@ -172,7 +172,7 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
         add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        #add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
