@@ -131,7 +131,7 @@ def render_call(sender, data):
 
 def start_record():
     configure_item("Start record", enabled=False)
-    recorder.start()
+    recorder.start("F, N; angle, deg; timestamp")
 
 
 def stop_record():
@@ -144,8 +144,7 @@ def make_screenshot():
     im = ImageGrab.grab()
 
     # save image file
-    im.save(
-        f"{ROOT_DIR}/em_modules_cst/screenshots/velo_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+    im.save(f"{ROOT_DIR}/screenshots/velo_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 def set_plot_time():
@@ -172,7 +171,7 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
         add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        #add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
