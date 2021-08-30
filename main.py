@@ -6,7 +6,7 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import UDP, Plotter, PlotSaver, close_help
+from util_ import Plotter, UDP, PlotSaver, disable_items, enable_items, close_help, disable_readonly
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/main.json"
@@ -14,6 +14,10 @@ HELP = f"{ROOT_DIR}/params/main.help"
 RECORD_DIR = f"{ROOT_DIR}/plots"
 
 COUNTER = 0
+POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
+                                "Start record", "Stop record", "Set plot time", "s"]
+MODEL_PARAMS = ["jam_pos_in", "F_set", "kShaker", "shaker_freq", "m", "f_mode2", "f_mode3", "a_mode5", "b_mode5",
+                "c_mode5", "d_mode5", "g_mode5", "v_mode6", "kD_mode6", "pow_mode6"]
 
 
 def connect(sender, data):
@@ -21,9 +25,12 @@ def connect(sender, data):
     configure_item("Address", enabled=False)
     udp.enable = True
     address = get_value("address")
-    # port = get_value("port")
     udp.connect(address)
     print(address)
+    enable_items(POST_CONNECTION_COMMON_ITEMS)
+    disable_items(["Connect", "Address"])
+    disable_readonly(MODEL_PARAMS)
+    disable_readonly(["s"])
 
 
 def disconnect(sender, data):
@@ -142,7 +149,7 @@ def make_screenshot():
 
     # save image file
     im.save(
-        f"{ROOT_DIR}/em_modules_cst/screenshots/main_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+        f"{ROOT_DIR}/screenshots/main_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 def set_plot_time():
@@ -152,57 +159,94 @@ def set_plot_time():
     plot.lim = plot_len
 
 
+def select_mode():
+    mode = int(get_value("i0"))
+    if mode == 0:
+        disable_items(MODEL_PARAMS)
+    elif mode == 1:
+        disable_items(MODEL_PARAMS)
+        enable_items(MODEL_PARAMS[:4])
+        disable_readonly(MODEL_PARAMS[:4])
+    elif mode == 2:
+        disable_items(MODEL_PARAMS)
+        enable_items(MODEL_PARAMS[4])
+        disable_readonly(MODEL_PARAMS[4])
+    elif mode == 3:
+        disable_items(MODEL_PARAMS)
+        enable_items(["f_mode2", "m"])
+        disable_readonly(["f_mode2", "m"])
+    elif mode == 4:
+        disable_items(MODEL_PARAMS)
+        enable_items(["F_set", "f_mode3"])
+        disable_readonly(["F_set", "f_mode3"])
+    elif mode == 5:
+        disable_items(MODEL_PARAMS)
+        enable_items(["F_set"])
+        disable_readonly(["F_set"])
+    elif mode == 6:
+        disable_items(MODEL_PARAMS)
+        enable_items(["a_mode5", "b_mode5", "c_mode5", "d_mode5", "g_mode5"])
+        disable_readonly(["a_mode5", "b_mode5", "c_mode5", "d_mode5", "g_mode5"])
+    elif mode == 7:
+        disable_items(MODEL_PARAMS)
+        enable_items(["v_mode6", "kD_mode6", "pow_mode6"])
+        disable_readonly([])
+    elif mode == 8:
+        disable_items(MODEL_PARAMS)
+        enable_items(["m"])
+        disable_readonly(["m"])
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
-        # add_input_text("Port", source="port", default_value="1234", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
         add_text("Model parameters")
         add_listbox("mode", source="i0", default_value=0, items=["0. Disabled",
-                                                                 "1. Constant position with vibration",
-                                                                 "2. Mass mode",
-                                                                 "3. Constant velocity",
-                                                                 "4. Overpowering mode",
-                                                                 "5. Friction mode",
-                                                                 "6. User mode",
+                                                                 "1. Isometric",
+                                                                 "2. Isotonic",
+                                                                 "3. Isokinetic",
+                                                                 "4. Overpower",
+                                                                 "5. Resistance",
+                                                                 "6. User",
                                                                  "7. Viscosity",
-                                                                 "8. Mass mode InerciaFree"])
-        add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200)
-        add_input_text("F_set", source="F_set", default_value="10.0", width=200)
-        add_input_text("kShaker", source="kShaker", default_value="0.1", width=200)
-        add_input_text("shaker_freq", source="shaker_freq", default_value="0.1", width=200)
-        add_input_text("m", source="m", default_value="20.0", width=200)
-        add_input_text("f_mode2", source="f_mode2", default_value="0.0", width=200)
-        add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200)
+                                                                 "8. Inertialess"], callback=select_mode)
+        add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200, enabled=False)
+        add_input_text("F_set", source="F_set", default_value="10.0", width=200, enabled=False)
+        add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
+        add_input_text("shaker_freq", source="shaker_freq", default_value="0.1", width=200, enabled=False)
+        add_input_text("m", source="m", default_value="20.0", width=200, enabled=False)
+        add_input_text("f_mode2", source="f_mode2", default_value="0.0", width=200, enabled=False)
+        add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200, enabled=False)
         # add_input_text("F_set_", source="F_set_", width=200)
-        add_input_text("a_mode5", source="a_mode5", default_value="0.0", width=200)
-        add_input_text("b_mode5", source="b_mode5", default_value="0.0", width=200)
-        add_input_text("c_mode5", source="c_mode5", default_value="0.0", width=200)
-        add_input_text("d_mode5", source="d_mode5", default_value="0.0", width=200)
-        add_input_text("g_mode5", source="g_mode5", default_value="0.0", width=200)
-        add_input_text("v_mode6", source="v_mode6", default_value="0.0", width=200)
-        add_input_text("kD_mode6", source="kD_mode6", default_value="0.0", width=200)
-        add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200)
+        add_input_text("a_mode5", source="a_mode5", default_value="0.0", width=200, enabled=False)
+        add_input_text("b_mode5", source="b_mode5", default_value="0.0", width=200, enabled=False)
+        add_input_text("c_mode5", source="c_mode5", default_value="0.0", width=200, enabled=False)
+        add_input_text("d_mode5", source="d_mode5", default_value="0.0", width=200, enabled=False)
+        add_input_text("g_mode5", source="g_mode5", default_value="0.0", width=200, enabled=False)
+        add_input_text("v_mode6", source="v_mode6", default_value="0.0", width=200, enabled=False)
+        add_input_text("kD_mode6", source="kD_mode6", default_value="0.0", width=200, enabled=False)
+        add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200, enabled=False)
 
-        add_button("Set parameters", callback=setup_params)
+        add_button("Set parameters", callback=setup_params, enabled=False)
         add_spacing(count=3)
-        add_button("Save parameters", callback=save_params)
-        add_button("Load parameters", callback=load_params)
+        add_button("Save parameters", callback=save_params, enabled=False)
+        add_button("Load parameters", callback=load_params, enabled=False)
         add_spacing(count=3)
-        add_button("Start record", callback=start_record)
-        add_button("Stop record", callback=stop_record)
+        add_button("Start record", callback=start_record, enabled=False)
+        add_button("Stop record", callback=stop_record, enabled=False)
         add_spacing(count=3)
         add_button("Help")
         add_spacing(count=3)
         add_button("Screenshot", callback=make_screenshot)
 
         add_spacing(count=3)
-        add_input_text("s", source="plot_time", default_value="10", width=50)
+        add_input_text("s", source="plot_time", default_value="10", width=50, enabled=False)
         add_button("Set plot time", callback=set_plot_time)
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
