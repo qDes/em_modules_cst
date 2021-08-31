@@ -135,7 +135,7 @@ def load_params(sender, data):
 
 def start_record():
     configure_item("Start record", enabled=False)
-    recorder.start()
+    recorder.start("F, N; angle, deg; timestamp")
 
 
 def stop_record():
@@ -190,7 +190,7 @@ def select_mode():
     elif mode == 7:
         disable_items(MODEL_PARAMS)
         enable_items(["v_mode6", "kD_mode6", "pow_mode6"])
-        disable_readonly([])
+        disable_readonly(["v_mode6", "kD_mode6", "pow_mode6"])
     elif mode == 8:
         disable_items(MODEL_PARAMS)
         enable_items(["m"])
@@ -201,8 +201,8 @@ with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection params")
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -215,13 +215,17 @@ with window("Main Window"):
                                                                  "5. Resistance",
                                                                  "6. User",
                                                                  "7. Viscosity",
-                                                                 "8. Inertialess"], callback=select_mode)
-        add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200, enabled=False)
-        add_input_text("F_set", source="F_set", default_value="10.0", width=200, enabled=False)
-        add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
+                                                                 "8. Inertialess"], callback=select_mode, enabled=False)
+        add_slider_float("jam_pos_in", source="jam_pos_in", default_value=0.0, min_value=0.0, max_value=1.0,
+                         enabled=False)
+        # add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200, enabled=False)
+        add_input_text("F_set", source="F_set", default_value="0", width=200, enabled=False)
+        # add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
+        add_slider_float("kShaker", source="kShaker", default_value=0.01, min_value=0.01, max_value=0.2,
+                         enabled=False)
         add_input_text("shaker_freq", source="shaker_freq", default_value="0.1", width=200, enabled=False)
-        add_input_text("m", source="m", default_value="20.0", width=200, enabled=False)
-        add_input_text("f_mode2", source="f_mode2", default_value="0.0", width=200, enabled=False)
+        add_input_text("m", source="m", default_value="5.0", width=200, enabled=False)
+        add_input_text("f_mode2", source="f_mode2", default_value="0.1", width=200, enabled=False)
         add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200, enabled=False)
         # add_input_text("F_set_", source="F_set_", width=200)
         add_input_text("a_mode5", source="a_mode5", default_value="0.0", width=200, enabled=False)
@@ -265,7 +269,7 @@ click_check = False
 
 
 def render_call(sender, data):
-    global click_check
+    global click_check, udp
     plot_callback()
 
     if is_item_clicked("mode"):
@@ -274,6 +278,11 @@ def render_call(sender, data):
     if click_check:
         print(get_value("i0"))
         click_check = False
+
+    if not udp.enable:
+        enable_items(["Connect", "Address"])
+        disable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+        set_value("i0", 0)
 
 
 if __name__ == "__main__":
