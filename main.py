@@ -87,15 +87,15 @@ def plot_callback():
         plot.update(get_delta_time(), y1, y2)
 
         # clear_plot("Plot1")
-        add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
-        add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+        add_line_series("Force", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Force", name='', x=plot.x2, y=[1500 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Distance", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
+        add_line_series("Distance", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
 
-        add_line_series("Plot", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Plot", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
+        add_line_series("Force", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
+        add_line_series("Distance", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
 
-        add_line_series("Plot1", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
+        add_line_series("Power", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         # add_line_series("Plot1", name=f'Total power {plot.total_power_0}, W', x=plot.px, y=[0 for x in plot.px], weight=0, axis=0)
 
         if recorder.is_saving:
@@ -166,7 +166,7 @@ def select_mode():
     elif mode == 1:
         disable_items(MODEL_PARAMS)
         enable_items(MODEL_PARAMS[:4])
-        disable_readonly(MODEL_PARAMS[:4])
+        disable_readonly(["F_set", "shaker_freq"])
     elif mode == 2:
         disable_items(MODEL_PARAMS)
         enable_items(MODEL_PARAMS[4])
@@ -261,9 +261,13 @@ with window("Main Window"):
     add_same_line()
     with tab_bar("Plots"):
         with tab("Plot 1"):
-            add_plot("Plot", height=-1, yaxis2=True, x_axis_name="Training time, s")
+            add_plot("Force", x_axis_name="Training time, s", height=250)
+            add_plot("Distance", x_axis_name="Training time, s", height=250)
+            add_plot("Power", x_axis_name="Training time, s", height=250)
+        '''
         with tab("Plot 2"):
             add_plot("Plot1", height=-1, yaxis2=True, x_axis_name="Training time, s")
+        '''
 
 click_check = False
 
