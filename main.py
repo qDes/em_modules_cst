@@ -287,6 +287,7 @@ def render_call(sender, data):
         enable_items(["Connect", "Address"])
         disable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
         set_value("i0", 0)
+        setup_params("", "")
 
 
 if __name__ == "__main__":
