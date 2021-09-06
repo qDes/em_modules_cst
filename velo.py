@@ -14,7 +14,7 @@ HELP = f"{ROOT_DIR}/params/velo.help"
 RECORD_DIR = f"{ROOT_DIR}/plots"
 
 POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
-                                "Start record", "Stop record", "Set plot time", "s"]
+                                "Start record", "Stop record", "Autocalib"]  # , "Set plot time", "s"]
 MODEL_PARAMS = ["m_inner, kg", "friction, N", "kPedal", "calib", "kShaker", "Shaker_limit, m", "F_set, N",
                 "shaker_freqp, Hz", "p_set, deg."]
 
@@ -60,8 +60,8 @@ def plot_callback():
         x3 = x2 % 360 - 180
         plot.update(get_delta_time(), x1, x2, x3)
 
-        # add_line_series("Plot", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
-        # add_line_series("Plot", name='', x=plot.x2, y=[600 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Force", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Force", name='', x=plot.x2, y=[1500 for x in plot.x2], weight=0, axis=0)
         # add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
@@ -74,7 +74,7 @@ def plot_callback():
         add_line_series("Pedal Angle", name='', x=plot.x2, y=[180 for x in plot.x2], weight=0, axis=0)
         # multiple by l - length of velo rod due to get moment
         l = 0.25
-        add_line_series("Plot2", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0,
+        add_line_series("Power", name='Power, W', x=plot.px, y=[y * l for y in plot.p1], weight=2, axis=0,
                         color=[255, 0, 0, -1])
 
         if recorder.is_saving:
@@ -169,6 +169,10 @@ def select_mode():
         disable_readonly(MODEL_PARAMS)
 
 
+def setup_calib():
+    set_value("calib", plot.y1[-1])
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         add_text("Connection parameters")
@@ -178,28 +182,24 @@ with window("Main Window"):
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
         add_text("Model parameters")
-        add_listbox("mode", source="i0", default_value=0, items=["0. Off", "1. Manual", "2. Vibration"], enabled=False, num_items=3,
+        add_listbox("mode", source="i0", default_value=0, items=["0. Off", "1. Manual", "2. Vibration"], enabled=False,
+                    num_items=3,
                     callback=select_mode)
-        #add_input_text("p_set, deg.", source="p_set", default_value="0.1", width=200,readonly=False)
-        add_slider_float("p_set, deg.", source="p_set", default_value=0.1, width=200, enabled=False, min_value=0.0, max_value=360.0)
-        # add_input_text("friction, N", source="friction", default_value="50.0", width=200, enabled=False)
+        add_slider_float("p_set, deg.", source="p_set", default_value=0.1, width=200, enabled=False, min_value=0.0,
+                         max_value=360.0)
         add_input_float("friction, N", source="friction", default_value=50.0, width=200, enabled=False)
-        # add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
         add_input_float("kShaker", source="kShaker", default_value=0.1, width=200, enabled=False)
-        # add_input_text("Shaker_limit, m", source="shaker_limit", default_value="0.1", width=200, enabled=False)
         add_input_float("Shaker_limit, m", source="shaker_limit", default_value=0.1, width=200, enabled=False)
-        # add_input_text("F_set, N", source="F_set", default_value="0.0", width=200, enabled=False)
         add_input_float("F_set, N", source="F_set", default_value=0.0, width=200, enabled=False)
-        # add_input_text("shaker_freqp, Hz", source="shaker_freqp", default_value="1.0", width=200, enabled=False)
-        add_slider_float("shaker_freqp, Hz", source="shaker_freqp", default_value=1.0, width=200, enabled=False, min_value=1.0, max_value=100.0)
-        # add_input_text("m_inner, kg", source="m_inner", default_value="60.0", width=200, enabled=False)
+        add_slider_float("shaker_freqp, Hz", source="shaker_freqp", default_value=1.0, width=200, enabled=False,
+                         min_value=1.0, max_value=100.0)
         add_input_float("m_inner, kg", source="m_inner", default_value=60.0, width=200, enabled=False, max_value=61)
-        # add_input_text("kPedal", source="kPedal", default_value="0.0", width=200, enabled=False)
         add_input_float("kPedal", source="kPedal", default_value=0.01, width=200, enabled=False)
-        # add_input_text("calib", source="calib", default_value="0.0", width=200, enabled=False)
         add_input_float("calib", source="calib", default_value=0.0, width=200, enabled=False)
 
         add_button("Set parameters", callback=setup_params, enabled=False)
+        add_spacing(count=3)
+        add_button("Autocalib", callback=setup_calib, enabled=False)
         add_spacing(count=3)
         add_button("Save parameters", callback=save_params, enabled=False)
         add_button("Load parameters", callback=load_params, enabled=False)
@@ -211,8 +211,8 @@ with window("Main Window"):
         add_spacing(count=3)
         add_button("Screenshot", callback=make_screenshot)
         add_spacing(count=3)
-        add_input_text("s", source="plot_time", default_value="10", width=50, enabled=False)
-        add_button("Set plot time", callback=set_plot_time, enabled=False)
+        add_input_text("s", source="plot_time", default_value="10", width=50)
+        add_button("Set plot time", callback=set_plot_time)
         with popup("Help", 'Help Popup', modal=True, mousebutton=mvMouseButton_Left):
             with open(HELP, 'r') as my_file:
                 help_data = my_file.read()
@@ -229,10 +229,9 @@ with window("Main Window"):
     '''
     with tab_bar("Plots"):
         with tab("Plot 1"):
-            add_plot("Force", x_axis_name="Training time, s", height=350)
-            add_plot("Pedal Angle", x_axis_name="Training time, s", height=350)
-        with tab("Plot 2"):
-            add_plot("Plot2", height=-1, x_axis_name="Training time, s")
+            add_plot("Force", x_axis_name="Training time, s", height=250)
+            add_plot("Pedal Angle", x_axis_name="Training time, s", height=250)
+            add_plot("Power", x_axis_name="Training time, s", height=250)
 
 if __name__ == "__main__":
     i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib = get_data("", "")
