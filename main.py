@@ -15,7 +15,7 @@ RECORD_DIR = f"{ROOT_DIR}/plots"
 
 COUNTER = 0
 POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
-                                "Start record", "Stop record", "Set plot time", "s"]
+                                "Start record", "Stop record"] #, "Set plot time", "s"]
 MODEL_PARAMS = ["jam_pos_in", "F_set", "kShaker", "shaker_freq", "m", "f_mode2", "f_mode3", "a_mode5", "b_mode5",
                 "c_mode5", "d_mode5", "g_mode5", "v_mode6", "kD_mode6", "pow_mode6"]
 
@@ -42,8 +42,6 @@ def disconnect(sender, data):
 def setup_params(sender, data):
     i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6 = get_data(
         "", "")
-    print(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5, d_mode5, g_mode5,
-          v_mode6, kD_mode6, pow_mode6)
     udp.update_params(i0, jam_pos_in, F_set, kShaker, shaker_freq, m, f_mode2, f_mode3, a_mode5, b_mode5, c_mode5,
                       d_mode5, g_mode5, v_mode6, kD_mode6, pow_mode6)
 
@@ -89,11 +87,11 @@ def plot_callback():
         # clear_plot("Plot1")
         add_line_series("Force", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
         add_line_series("Force", name='', x=plot.x2, y=[1500 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Distance", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
-        add_line_series("Distance", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
+        add_line_series("Distance", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=0)
+        add_line_series("Distance", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=0)
 
         add_line_series("Force", "Force, N", plot.x1, plot.y1, weight=2, axis=0)
-        add_line_series("Distance", "Position, cm", plot.x2, plot.y2, weight=2, axis=1)
+        add_line_series("Distance", "Position, cm", plot.x2, plot.y2, weight=2, axis=0)
 
         add_line_series("Power", name='Power, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         # add_line_series("Plot1", name=f'Total power {plot.total_power_0}, W', x=plot.px, y=[0 for x in plot.px], weight=0, axis=0)
@@ -219,23 +217,23 @@ with window("Main Window"):
         add_slider_float("jam_pos_in", source="jam_pos_in", default_value=0.0, min_value=0.0, max_value=1.0,
                          enabled=False)
         # add_input_text("jam_pos_in", source="jam_pos_in", default_value="0.1", width=200, enabled=False)
-        add_input_text("F_set", source="F_set", default_value="0", width=200, enabled=False)
+        add_input_float("F_set", source="F_set", default_value=0.0, width=200, enabled=False, min_value=0.0)
         # add_input_text("kShaker", source="kShaker", default_value="0.1", width=200, enabled=False)
         add_slider_float("kShaker", source="kShaker", default_value=0.01, min_value=0.01, max_value=0.2,
                          enabled=False)
-        add_input_text("shaker_freq", source="shaker_freq", default_value="0.1", width=200, enabled=False)
-        add_input_text("m", source="m", default_value="5.0", width=200, enabled=False)
-        add_input_text("f_mode2", source="f_mode2", default_value="0.1", width=200, enabled=False)
-        add_input_text("f_mode3", source="f_mode3", default_value="1.0", width=200, enabled=False)
+        add_input_float("shaker_freq", source="shaker_freq", default_value=0.1, width=200, enabled=False, min_value=0.1)
+        add_input_float("m", source="m", default_value=5.0, width=200, enabled=False, min_value=1.0)
+        add_input_float("f_mode2", source="f_mode2", default_value=0.1, width=200, enabled=False)
+        add_input_float("f_mode3", source="f_mode3", default_value=1.0, width=200, enabled=False)
         # add_input_text("F_set_", source="F_set_", width=200)
-        add_input_text("a_mode5", source="a_mode5", default_value="0.0", width=200, enabled=False)
-        add_input_text("b_mode5", source="b_mode5", default_value="0.0", width=200, enabled=False)
-        add_input_text("c_mode5", source="c_mode5", default_value="0.0", width=200, enabled=False)
-        add_input_text("d_mode5", source="d_mode5", default_value="0.0", width=200, enabled=False)
-        add_input_text("g_mode5", source="g_mode5", default_value="0.0", width=200, enabled=False)
-        add_input_text("v_mode6", source="v_mode6", default_value="0.0", width=200, enabled=False)
-        add_input_text("kD_mode6", source="kD_mode6", default_value="0.0", width=200, enabled=False)
-        add_input_text("pow_mode6", source="pow_mode6", default_value="2", width=200, enabled=False)
+        add_input_float("a_mode5", source="a_mode5", default_value=0.0, width=200, enabled=False)
+        add_input_float("b_mode5", source="b_mode5", default_value=0.0, width=200, enabled=False)
+        add_input_float("c_mode5", source="c_mode5", default_value=0.0, width=200, enabled=False)
+        add_input_float("d_mode5", source="d_mode5", default_value=0.0, width=200, enabled=False)
+        add_input_float("g_mode5", source="g_mode5", default_value=0.0, width=200, enabled=False)
+        add_input_float("v_mode6", source="v_mode6", default_value=0.0, width=200, enabled=False)
+        add_input_float("kD_mode6", source="kD_mode6", default_value=0.0, width=200, enabled=False)
+        add_input_float("pow_mode6", source="pow_mode6", default_value=2.0, width=200, enabled=False)
 
         add_button("Set parameters", callback=setup_params, enabled=False)
         add_spacing(count=3)
@@ -280,7 +278,7 @@ def render_call(sender, data):
         click_check = True
         return
     if click_check:
-        print(get_value("i0"))
+        #print(get_value("i0"))
         click_check = False
 
     if not udp.enable:
@@ -298,10 +296,6 @@ if __name__ == "__main__":
     plot = Plotter()
     recorder = PlotSaver(RECORD_DIR, "main")
     set_main_window_title("Universal/Inclided")
-    # add_line_series("Plot", name='', x=[0, 10], y=[0, 0], weight=0, axis=0)
-    # add_line_series("Plot", name='', x=[0, 1], y=[600, 600], weight=0, axis=0)
-    # add_line_series("Plot", name='', x=[0, 1], y=[-1, -1], weight=0, axis=1)
-    # add_line_series("Plot", name='', x=[0, 1], y=[100, 100], weight=0, axis=1)
     set_render_callback(render_call)
 
     start_dearpygui(primary_window="Main Window")
