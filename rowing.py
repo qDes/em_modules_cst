@@ -77,15 +77,13 @@ def plot_callback():
         y1, y2, y3, y4 = y[0], y[1], y[5], y[6]
         plot.update(get_delta_time(), y1, y2, y3, y4)
         # clear_plot("Plot")
-        add_line_series("Force1", "F1", plot.x1, plot.y1, weight=2, axis=0, color=[255, 0, 0])
-        add_line_series("Distance1", "pos1", plot.x2, plot.y2, weight=2, axis=0, color=[0, 255, 0])
-        add_line_series("Force2", "F2", plot.x3, plot.y3, weight=2, axis=0, color=[255, 0, 0])
-        add_line_series("Distance2", "pos2", plot.x4, plot.y4, weight=2, axis=0, color=[0, 255, 0])
+        add_line_series("Force 1", "F1", plot.x1, plot.y1, weight=2, axis=0, color=[255, 0, 0])
+        add_line_series("Distance 1", "pos1", plot.x2, plot.y2, weight=2, axis=0, color=[0, 255, 0])
+        add_line_series("Force 2", "F2", plot.x3, plot.y3, weight=2, axis=0, color=[255, 0, 0])
+        add_line_series("Distance 2", "pos2", plot.x4, plot.y4, weight=2, axis=0, color=[0, 255, 0])
 
-        add_line_series("Power1", name='Power1, W', x=plot.px, y=plot.p1, weight=2, axis=0)
-        add_line_series("Power2", name='Power2, W', x=plot.px, y=plot.p2, weight=2, axis=0)
-
-        # print(len(plot.p1), len(plot.p2), len(plot.px))
+        add_line_series("Power 1", name='Power1, W', x=plot.px, y=plot.p1, weight=2, axis=0)
+        add_line_series("Power 2", name='Power2, W', x=plot.px, y=plot.p2, weight=2, axis=0)
 
         if recorder.is_saving:
             recorder.get_data(y1, y2, y3, y4)
@@ -115,7 +113,7 @@ def load_params(sender, data):
 
 def start_record():
     configure_item("Start record", enabled=False)
-    recorder.start()
+    recorder.start("F1, N; distance1, cm; F2, N; distance2, cm;timestamp")
 
 
 def stop_record():
@@ -153,8 +151,8 @@ with window("Main Window"):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection parameters")
 
-        # add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
+        add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
@@ -189,14 +187,14 @@ with window("Main Window"):
     add_same_line()
 
     with tab_bar("Plots"):
-        with tab("axes"):
-            add_plot("Force1", x_axis_name="Training time, s", height=180)
-            add_plot("Force2", x_axis_name="Training time, s", height=180)
-            add_plot("Distance1", x_axis_name="Training time, s", height=180)
-            add_plot("Distance2", x_axis_name="Training time, s", height=180)
+        with tab("axis"):
+            add_plot("Force 1", x_axis_name="Training time, s", height=180)
+            add_plot("Force 2", x_axis_name="Training time, s", height=180)
+            add_plot("Distance 1", x_axis_name="Training time, s", height=180)
+            add_plot("Distance 2", x_axis_name="Training time, s", height=180)
         with tab("power"):
-            add_plot("Power1", x_axis_name="Training time, s", height=350)
-            add_plot("Power2", x_axis_name="Training time, s", height=350)
+            add_plot("Power 1", x_axis_name="Training time, s", height=350)
+            add_plot("Power 2", x_axis_name="Training time, s", height=350)
         '''
         with tab("Plot 1"):
             with group("sasi"):
