@@ -6,12 +6,15 @@ from dearpygui.core import *
 from dearpygui.simple import *
 import pyscreenshot as ImageGrab
 
-from util_ import UDP, Plotter, PlotSaver, close_help
+from util_ import UDP, Plotter, PlotSaver, close_help, disable_readonly, disable_items, enable_items
 
 ROOT_DIR = os.getcwd()
 PARAMS = f"{ROOT_DIR}/params/rowing.json"
 HELP = f"{ROOT_DIR}/params/rowing.help"
 RECORD_DIR = f"{ROOT_DIR}/plots"
+MODEL_PARAMS = ["a", "m_inner, kg", "kOut_mode1"]
+POST_CONNECTION_COMMON_ITEMS = ["Disconnect", "mode", "Set parameters", "Save parameters", "Load parameters",
+                                "Start record", "Stop record"]
 
 
 def connect(sender, data):
@@ -21,6 +24,10 @@ def connect(sender, data):
     # port = get_value("port")
     udp.connect(address)
     print(address)
+    enable_items(POST_CONNECTION_COMMON_ITEMS)
+    disable_items(["Connect", "Address"])
+    disable_readonly(MODEL_PARAMS)
+    disable_readonly(["s"])
 
 
 def disconnect(sender, data):
@@ -29,28 +36,36 @@ def disconnect(sender, data):
 
 
 def setup_params(sender, data):
-    i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data(
-        "", "")
-    udp.update_params(i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1)
+    i0, a, m_inner, kOut_mode1 = get_data("", "")
+    udp.update_params(i0, 0, 0, 0, 0, 0, 0, m_inner, 0, kOut_mode1)
 
 
 def get_data(sender, data):
     i0 = int(get_value("i0"))
     a = float(get_value("a"))
-    b = float(get_value("b"))
-    c = float(get_value("c"))
-    d = float(get_value("d"))
-    e = float(get_value("e"))
-    f = float(get_value("f"))
     m_inner = float(get_value("m_inner"))
-    kOut_mode0 = float(get_value("kOut_mode0"))
     kOut_mode1 = float(get_value("kOut_mode1"))
-    print(i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1)
-    return i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1
+    return i0, a, m_inner, kOut_mode1
+
+
+click_check = False
 
 
 def render_call(sender, data):
+    global click_check, udp
     plot_callback()
+    if is_item_clicked("mode"):
+        click_check = True
+        return
+    if click_check:
+        # print(get_value("i0"))
+        click_check = False
+
+    if not udp.enable:
+        enable_items(["Connect", "Address"])
+        disable_items(POST_CONNECTION_COMMON_ITEMS + MODEL_PARAMS)
+        set_value("i0", 0)
+        setup_params("", "")
 
 
 def plot_callback():
@@ -118,8 +133,7 @@ def make_screenshot():
     im = ImageGrab.grab()
 
     # save image file
-    im.save(
-        f"{ROOT_DIR}/em_modules_cst/screenshots/rowing_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
+    im.save(f"{ROOT_DIR}/screenshots/rowing_{datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')}.png")
 
 
 def set_plot_time():
@@ -129,35 +143,40 @@ def set_plot_time():
     plot.lim = plot_len
 
 
+def select_mode():
+    mode = int(get_value("i0"))
+    if mode == 0:
+        disable_items(MODEL_PARAMS)
+    elif mode == 1:
+        disable_items(MODEL_PARAMS)
+        enable_items(MODEL_PARAMS)
+        disable_readonly(MODEL_PARAMS)
+
+
 with window("Main Window"):
     with group("Left Panel", width=250):
         # add_button("Plot data", callback=plot_callback)
         add_text("Connection parameters")
 
         add_input_text("Address", source="address", default_value="192.168.0.193", width=200)
-        # add_input_text("Address", source="address", default_value="192.168.31.149", width=200)
+        # add_input_text("Address", source="address", default_value="192.168.0.168", width=200)
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect)
         ## Params
         add_text("Model parameters")
-        add_listbox("mode", source="i0", default_value=0, items=["0", "1", "2"])
-        add_input_text("a", source="a", default_value="0.1", width=200)
-        add_input_text("b", source="b", default_value="10.0", width=200)
-        add_input_text("c", source="c", default_value="0.1", width=200)
-        add_input_text("d", source="d", default_value="0.1", width=200)
-        add_input_text("e", source="e", default_value="20.0", width=200)
-        add_input_text("f, m", source="f", default_value="0.0", width=200)
-        add_input_text("m_inner, kg", source="m_inner", default_value="5.0", width=200)
-        add_input_text("kOut_mode0", source="kOut_mode0", default_value="1.0", width=200)
-        add_input_text("kOut_mode1", source="kOut_mode1", default_value="0.0", width=200)
+        add_listbox("mode", source="i0", default_value=0, items=["0. Off", "2. Viscous"], callback=select_mode)
+        add_input_float("a", source="a", default_value=0.1, width=200, enabled=False)
+        add_input_float("m_inner, kg", source="m_inner", default_value=0.3, width=200, min_value=0.3, max_value=2.0,
+                        enabled=False)
+        add_input_float("kOut_mode1", source="kOut_mode1", default_value=0.1, width=200, enabled=False)
 
-        add_button("Set parameters", callback=setup_params)
+        add_button("Set parameters", callback=setup_params, enabled=False)
         add_spacing(count=3)
-        add_button("Save parameters", callback=save_params)
-        add_button("Load parameters", callback=load_params)
+        add_button("Save parameters", callback=save_params, enabled=False)
+        add_button("Load parameters", callback=load_params, enabled=False)
         add_spacing(count=3)
-        add_button("Start record", callback=start_record)
-        add_button("Stop record", callback=stop_record)
+        add_button("Start record", callback=start_record, enabled=False)
+        add_button("Stop record", callback=stop_record, enabled=False)
         add_spacing(count=3)
         add_button("Help")
         add_spacing(count=3)
@@ -187,9 +206,9 @@ with window("Main Window"):
             add_plot("Plot_1", yaxis2=True, x_axis_name="Training time, s", height=300)
 
 if __name__ == "__main__":
-    i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1 = get_data("", "")
+    i0, a, m_inner, kOut_mode1 = get_data("", "")
     plot = Plotter()
-    udp = UDP(i0, a, b, c, d, e, f, m_inner, kOut_mode0, kOut_mode1)
+    udp = UDP(i0, a, 0, 0, 0, 0, 0, m_inner, 0, kOut_mode1)
     recorder = PlotSaver(RECORD_DIR, "rowing")
     set_main_window_title("Rowing")
     set_render_callback(render_call)
