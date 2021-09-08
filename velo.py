@@ -170,7 +170,7 @@ def select_mode():
 
 
 def setup_calib():
-    set_value("calib", plot.y1[-1])
+    set_value("calib", -1*plot.y1[-1])
 
 
 with window("Main Window"):
