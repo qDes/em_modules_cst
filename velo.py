@@ -60,8 +60,8 @@ def plot_callback():
         x3 = x2 % 360 - 180
         plot.update(get_delta_time(), x1, x2, x3)
 
-        add_line_series("Force", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
-        add_line_series("Force", name='', x=plot.x2, y=[1500 for x in plot.x2], weight=0, axis=0)
+        # add_line_series("Force", name='', x=plot.x2, y=[0 for x in plot.x2], weight=0, axis=0)
+        # add_line_series("Force", name='', x=plot.x2, y=[1500 for x in plot.x2], weight=0, axis=0)
         # add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
@@ -187,14 +187,14 @@ with window("Main Window"):
                     callback=select_mode)
         add_slider_float("p_set, deg.", source="p_set", default_value=0.1, width=200, enabled=False, min_value=0.0,
                          max_value=360.0)
-        add_input_float("friction, N", source="friction", default_value=50.0, width=200, enabled=False)
+        add_input_float("friction, N", source="friction", default_value=50.0, width=200, enabled=False, step=1.0)
         add_input_float("kShaker", source="kShaker", default_value=0.1, width=200, enabled=False)
         add_input_float("Shaker_limit, m", source="shaker_limit", default_value=0.1, width=200, enabled=False)
-        add_input_float("F_set, N", source="F_set", default_value=0.0, width=200, enabled=False)
+        add_input_float("F_set, N", source="F_set", default_value=0.0, width=200, enabled=False, step=1.0)
         add_slider_float("shaker_freqp, Hz", source="shaker_freqp", default_value=1.0, width=200, enabled=False,
                          min_value=1.0, max_value=100.0)
-        add_input_float("m_inner, kg", source="m_inner", default_value=60.0, width=200, enabled=False, max_value=61)
-        add_input_float("kPedal", source="kPedal", default_value=0.01, width=200, enabled=False)
+        add_input_float("m_inner, kg", source="m_inner", default_value=60.0, width=200, enabled=False, step=1.0)
+        add_input_float("kPedal", source="kPedal", default_value=1.0, width=200, enabled=False)
         add_input_float("calib", source="calib", default_value=0.0, width=200, enabled=False)
 
         add_button("Set parameters", callback=setup_params, enabled=False)
