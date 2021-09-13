@@ -185,8 +185,8 @@ with window("Main Window"):
         add_listbox("mode", source="i0", default_value=0, items=["0. Off", "1. Manual", "2. Vibration"], enabled=False,
                     num_items=3,
                     callback=select_mode)
-        add_slider_float("p_set, deg.", source="p_set", default_value=0.1, width=200, enabled=False, min_value=0.0,
-                         max_value=360.0)
+        add_slider_float("p_set, deg.", source="p_set", default_value=0.0, width=200, enabled=False, min_value=0.0,
+                         max_value=270.0, step=1.0)
         add_input_float("friction, N", source="friction", default_value=50.0, width=200, enabled=False, step=1.0)
         add_input_float("kShaker", source="kShaker", default_value=0.1, width=200, enabled=False)
         add_input_float("Shaker_limit, m", source="shaker_limit", default_value=0.1, width=200, enabled=False)
