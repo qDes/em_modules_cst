@@ -79,8 +79,10 @@ def plot_callback():
         # clear_plot("Plot")
         add_line_series("Force 1", "F1", plot.x1, plot.y1, weight=2, axis=0, color=[255, 0, 0])
         add_line_series("Distance 1", "pos1", plot.x2, plot.y2, weight=2, axis=0, color=[0, 255, 0])
+        add_line_series("Distance 1 p", "pos1", plot.x2, plot.y2, weight=2, axis=0, color=[0, 255, 0])
         add_line_series("Force 2", "F2", plot.x3, plot.y3, weight=2, axis=0, color=[255, 0, 0])
         add_line_series("Distance 2", "pos2", plot.x4, plot.y4, weight=2, axis=0, color=[0, 255, 0])
+        add_line_series("Distance 2 p", "pos2", plot.x4, plot.y4, weight=2, axis=0, color=[0, 255, 0])
 
         add_line_series("Power 1", name='Power1, W', x=plot.px, y=plot.p1, weight=2, axis=0)
         add_line_series("Power 2", name='Power2, W', x=plot.px, y=plot.p2, weight=2, axis=0)
@@ -189,12 +191,14 @@ with window("Main Window"):
     with tab_bar("Plots"):
         with tab("axis"):
             add_plot("Force 1", x_axis_name="Training time, s", height=180)
-            add_plot("Force 2", x_axis_name="Training time, s", height=180)
             add_plot("Distance 1", x_axis_name="Training time, s", height=180)
+            add_plot("Force 2", x_axis_name="Training time, s", height=180)
             add_plot("Distance 2", x_axis_name="Training time, s", height=180)
         with tab("power"):
-            add_plot("Power 1", x_axis_name="Training time, s", height=350)
-            add_plot("Power 2", x_axis_name="Training time, s", height=350)
+            add_plot("Power 1", x_axis_name="Training time, s", height=180)
+            add_plot("Distance 1 p", x_axis_name="Training time, s", height=180)
+            add_plot("Power 2", x_axis_name="Training time, s", height=180)
+            add_plot("Distance 2 p", x_axis_name="Training time, s", height=180)
         '''
         with tab("Plot 1"):
             with group("sasi"):
