@@ -4,6 +4,8 @@ import os
 
 from dearpygui.core import *
 from dearpygui.simple import *
+from scipy.signal import savgol_filter
+import numpy as np
 import pyscreenshot as ImageGrab
 
 from util_ import Plotter, UDP, PlotSaver, disable_items, enable_items, close_help, disable_readonly
@@ -65,11 +67,18 @@ def plot_callback():
         # add_line_series("Plot", name='', x=plot.x2, y=[-1 for x in plot.x2], weight=0, axis=1)
         # add_line_series("Plot", name='', x=plot.x2, y=[100 for x in plot.x2], weight=0, axis=1)
         # clear_plot("Plot")
+        force = np.array(plot.y1)
+        angle_left = np.array(plot.y2)
+        angle_right = np.array(plot.y3)
+        if get_value("filter"):
+            force = savgol_filter(force, 5, 2)
+            angle_left = savgol_filter(angle_left, 5, 2)
+            angle_right = savgol_filter(angle_right, 5, 2)
 
-        add_line_series("Force", "F, N", plot.x1, plot.y1, weight=2, axis=0, color=[255, 0, 0])
+        add_line_series("Force", "F, N", plot.x1, force, weight=2, axis=0, color=[255, 0, 0])
         # TODO: добавить границы -180 180
-        add_line_series("Pedal Angle", "angle left, deg", plot.x2, plot.y2, weight=2, axis=0)
-        add_line_series("Pedal Angle", "angle right, deg", plot.x2, plot.y3, weight=2, axis=0)
+        add_line_series("Pedal Angle", "angle left, deg", plot.x2, angle_left, weight=2, axis=0)
+        add_line_series("Pedal Angle", "angle right, deg", plot.x2, angle_right, weight=2, axis=0)
         add_line_series("Pedal Angle", name='', x=plot.x2, y=[-180 for x in plot.x2], weight=0, axis=0)
         add_line_series("Pedal Angle", name='', x=plot.x2, y=[180 for x in plot.x2], weight=0, axis=0)
         # multiple by l - length of velo rod due to get moment
@@ -90,10 +99,9 @@ def get_data(sender, data):
     F_set = float(get_value("F_set"))
     shaker_freqp = float(get_value("shaker_freqp"))
     m_inner = get_value("m_inner")
-    print(m_inner)
     kPedal = float(get_value("kPedal"))
     calib = float(get_value("calib"))
-    print(i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib)
+    # print(i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib)
     return i0, p_set, friction, kShaker, shaker_limit, F_set, shaker_freqp, m_inner, kPedal, calib
 
 
@@ -170,7 +178,7 @@ def select_mode():
 
 
 def setup_calib():
-    set_value("calib", -1*plot.y1[-1])
+    set_value("calib", -1 * plot.y1[-1])
 
 
 with window("Main Window"):
@@ -181,12 +189,14 @@ with window("Main Window"):
         add_button("Connect", callback=connect)
         add_button("Disconnect", callback=disconnect, enabled=False)
         ## Params
+        add_checkbox("filter")
         add_text("Model parameters")
         add_listbox("mode", source="i0", default_value=0, items=["0. Off", "1. Manual", "2. Vibration"], enabled=False,
                     num_items=3,
                     callback=select_mode)
-        add_slider_float("p_set, deg.", source="p_set", default_value=0.0, width=200, enabled=False, min_value=0.0,
-                         max_value=270.0, step=1.0)
+        # add_input_float("p_set, deg.", source="p_set", default_value=1.0, width=200, enabled=False, min_value=0.0, max_value=270.0, step=1.0)
+        add_slider_float("p_set, deg.", source="p_set", default_value=1.0, width=200, enabled=False, min_value=0.0,
+                         max_value=270.0)
         add_input_float("friction, N", source="friction", default_value=50.0, width=200, enabled=False, step=1.0)
         add_input_float("kShaker", source="kShaker", default_value=0.1, width=200, enabled=False)
         add_input_float("Shaker_limit, m", source="shaker_limit", default_value=0.1, width=200, enabled=False)
